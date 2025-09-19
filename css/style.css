@@ -1,0 +1,460 @@
+body {
+  font: 16px/1.6em Arial, Helvetica, sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #f4f4f4;
+  overflow-x: hidden;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/*.button_1 {
+  height: 38px;
+  background-color: #d890d8;
+  color: #fff;
+  padding: 0 20px;
+  border: none;
+  border-radius: 4px;
+  text-transform: capitalize;
+  cursor: pointer;
+}*/
+.dark {
+  padding: 15px;
+  background: #666666;
+  color: #fff;
+  margin: 10px 0 10px 0;
+}
+.container {
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header {
+  background-color: #004080;
+  color: #fff;
+  min-height: 80px;
+  padding-top: 10px 0;
+  border-bottom: #47ec47 solid 3px;
+}
+header nav ul {
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  font: 16px/1.6em Arial, Helvetica, sans-serif;
+}
+header nav li {
+  display: inline-block;
+  padding: 0 20px 0 20px;
+}
+header a {
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+header a:hover {
+  color: #6cc24a;
+  font-weight: bold;
+}
+#brand {
+  display: flex;
+  align-items: center;
+}
+#logo {
+  height: 80px;
+  width: auto;
+  background: #ffffffec;
+  padding: 6px 35px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+header .highlight,
+header .current a {
+  color: #6cc24a;
+  font-weight: bold;
+}
+#showcase {
+  position: relative;
+  background: url(../images/showcase_background.jpeg) center center no-repeat;
+  min-height: 525px;
+  background-size: cover;
+  color: #fff;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+#showcase::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(0, 64, 128, 0.7), transparent);
+  z-index: 1;
+}
+#showcase .container {
+  position: relative;
+  z-index: 2;
+  text-align: left;
+  max-width: 600px;
+  padding-top: 10px;
+  padding-right: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#showcase h1 {
+  line-height: 1.1em;
+  font-size: clamp(16px, 5vw, 48px);
+  margin: 0;
+  font-style: italic;
+  text-transform: uppercase;
+}
+#showcase h2 {
+  font-size: clamp(16px, 5vw, 24px);
+  margin: 0 0 20px;
+  font-weight: 400;
+  line-height: 1.3em;
+}
+#showcase h1,
+#showcase h2 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#bloques .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 30px;
+  flex-wrap: nowrap;
+}
+.bloque {
+  flex: 1 1 50%;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.bloque img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border: 3px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: block;
+  max-height: 100%;
+}
+.bloque.img-bloque {
+  max-height: 100%;
+}
+.bloque.text-bloque {
+  margin-right: 30px;
+}
+.bloque p {
+  text-align: justify;
+}
+#valores-virtudes {
+  padding: 0 2em;
+}
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  grid-gap: 1.5em;
+  grid-auto-rows: minmax(100px, auto);
+  justify-content: stretch;
+  align-items: stretch;
+}
+
+.wrapper div {
+  padding: 1.6em;
+  background: #eee;
+  border: 3px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateY(18px);
+  transition: transform 300ms ease, box-shadow 300ms ease;
+  will-change: transform, opacity;
+}
+.wrapper div.reveal {
+  animation: fadeUp 650ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+.wrapper div:nth-child(1) {
+  animation-delay: 60ms;
+}
+.wrapper div:nth-child(2) {
+  animation-delay: 140ms;
+}
+.wrapper div:nth-child(3) {
+  animation-delay: 220ms;
+}
+.wrapper div:nth-child(4) {
+  animation-delay: 300ms;
+}
+.wrapper div:nth-child(5) {
+  animation-delay: 380ms;
+}
+.wrapper div:nth-child(6) {
+  animation-delay: 460ms;
+}
+.wrapper div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+.wrapper div h3 {
+  text-align: center;
+  text-transform: uppercase;
+}
+.wrapper div p {
+  text-align: justify;
+}
+#valores-virtudes {
+  margin: 35px 20px 25px 20px;
+}
+#servicios .container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+#servicios .Talleres,
+#servicios .Repuestos {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  align-items: stretch;
+}
+#servicios .Accesorios {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 30px;
+  align-items: stretch;
+}
+#servicios a {
+  text-transform: capitalize;
+  text-decoration: none;
+  color: #004080;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+#servicios a:hover {
+  color: #6cc24a;
+  font-weight: bold;
+}
+#servicios .container > div {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: transform 300ms ease, box-shadow 300ms ease;
+  will-change: transform, opacity;
+}
+#servicios .container > div.reveal {
+  animation: fadeUp 650ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+#servicios .container > div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+aside#sidebar {
+  float: right;
+  margin-top: 35px;
+  width: 30%;
+  padding: 15px;
+  box-sizing: border-box;
+}
+#main-col {
+  float: left;
+  margin-top: 10px;
+  padding: 15px;
+  width: 70%;
+  box-sizing: border-box;
+}
+ul#servicios li {
+  list-style: none;
+  padding: 20px;
+  border: #ccc 1px solid;
+}
+footer {
+  padding: 20px;
+  margin-top: 20px;
+  background: #004080;
+  color: #ffffffa8;
+  text-align: center;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wrapper div,
+  .wrapper div.reveal {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+@media (max-width: 768px) {
+  article#main-col,
+  aside#sidebar {
+    float: none;
+    text-align: center;
+    width: 100%;
+  }
+  header .container{
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  header nav ul{
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+  }
+  header nav li{
+    padding: 0;
+  }
+  header a{
+    font-size: 18px;
+  }
+  #logo{
+    height: 60px;
+    padding: 6px 20px;
+  }
+  header {
+    padding-bottom: 20px;
+  }
+  #showcase h1 {
+    margin-top: 40px;
+  }
+  #bloques .container {
+    flex-direction: column;
+  }
+  .bloque {
+    flex: 1 1 100%;
+  }
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+  #servicios .Talleres,
+  #servicios .Accesorios,
+  #servicios .Repuestos {
+    flex-direction: column;
+  }
+}
+@media (max-width: 400px) {
+  header .container {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  header nav ul {
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+  }
+
+  header nav li {
+    padding: 0;
+  }
+
+  header a {
+    font-size: 14px;
+  }
+
+  #logo {
+    height: 50px;
+    padding: 4px 20px;
+  }
+  #showcase .container {
+    padding-right: 20px;
+    padding-left: 20px;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+
+  #showcase h1 {
+    font-size: 24px;
+    white-space: normal;
+  }
+
+  #showcase h2 {
+    font-size: 16px;
+  }
+  #bloques .container {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .bloque {
+    flex: 1 1 100%;
+    padding: 10px;
+  }
+
+  .bloque img {
+    width: 100%;
+    height: auto;
+  }
+  .wrapper {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 10px;
+  }
+
+  .wrapper div {
+    padding: 1em;
+  }
+
+  .wrapper div h3 {
+    font-size: 16px;
+  }
+
+  .wrapper div p {
+    font-size: 14px;
+  }
+  #servicios .container {
+    gap: 30px;
+    padding: 0 10px;
+  }
+
+  #servicios .Talleres,
+  #servicios .Accesorios,
+  #servicios .Repuestos {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .bloque.text-bloque h3 {
+    font-size: 16px;
+  }
+
+  .bloque.text-bloque p {
+    font-size: 14px;
+  }
+
+  #servicios a {
+    font-size: 14px;
+  }
+}
