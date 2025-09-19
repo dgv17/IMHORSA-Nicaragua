@@ -46,3 +46,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     serviceBoxes.forEach((box) => observer.observe(box));
 });
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.querySelector('.menu-toggle');
+    const submenu = document.querySelector('.submenu');
+    if (toggle && submenu) {
+        toggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            submenu.classList.toggle('visible');
+        });
+    }
+});
