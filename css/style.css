@@ -113,25 +113,13 @@ header nav li.desplegable{
   text-transform: capitalize;
   transition: background 0.3s ease;
 }
-.submenu a:hover {
-  background-color: #47ec47;
-  color: #004080;
-  font-weight: bold;
-}
-/* Mostrar el submenu cuando pongas el mouse encima
+/* Mostrar el submenu cuando pongas el mouse encima*/
 header nav li.desplegable:hover .submenu {
   display: block;
-} */
+} 
 header nav li .submenu li {
   padding: 8px 20px;
 }
-/*header nav li .submenu a {
-  color: #fff;
-  font-size: 14px;
-  text-transform: capitalize;
-  display: block;
-  transition: background 0.3s ease;
-}*/
 header nav li.desplegable > a::after {
   content: " ▾";
   font-size: 12px;

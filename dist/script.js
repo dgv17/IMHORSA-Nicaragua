@@ -1,6 +1,5 @@
 "use strict";
 console.log("proyecto ing. de software UNI segundo semestre 2025");
-// reveal-on-scroll animacion
 const supportsIntersectionObserver = 'IntersectionObserver' in window;
 const gridBoxes = document.querySelectorAll('#valores-virtudes .wrapper > div');
 if (!supportsIntersectionObserver) {
@@ -36,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const index = Array.from(serviceBoxes).indexOf(target);
                 target.style.animationDelay = `${index * 120}ms`;
                 target.classList.add('reveal');
-                obs.unobserve(target); // Animate only once
+                obs.unobserve(target); // Animar solo una vez
             }
         });
     }, {
@@ -47,12 +46,19 @@ document.addEventListener('DOMContentLoaded', () => {
     serviceBoxes.forEach((box) => observer.observe(box));
 });
 document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.querySelector('.menu-toggle');
-    const submenu = document.querySelector('.submenu');
-    if (toggle && submenu) {
-        toggle.addEventListener('click', (event) => {
-            event.preventDefault();
-            submenu.classList.toggle('visible');
-        });
-    }
+    const toggles = document.querySelectorAll('.menu-toggle');
+    const submenus = document.querySelectorAll('.submenu');
+    toggles.forEach((toggle, index) => {
+        const submenu = submenus[index];
+        if (submenu) {
+            toggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                submenus.forEach((sm, i) => {
+                    if (i !== index)
+                        sm.classList.remove('visible');
+                });
+                submenu.classList.toggle('visible');
+            });
+        }
+    });
 });
