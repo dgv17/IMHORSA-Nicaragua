@@ -408,10 +408,14 @@ footer {
     border-radius: 0;
     padding: 0;
     margin-left: 1rem;      
-    display: none;          
+    display: none;    
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;      
   }
 
   .submenu.visible {
+    max-height: 500px; 
     display: block;         
   }
 

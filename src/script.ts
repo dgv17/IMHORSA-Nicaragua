@@ -62,34 +62,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   serviceBoxes.forEach((box) => observer.observe(box));
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   const toggles = document.querySelectorAll('.menu-toggle') as NodeListOf<HTMLButtonElement>;
   const submenus = document.querySelectorAll('.submenu') as NodeListOf<HTMLUListElement>;
 
   toggles.forEach((toggle, index) => {
     const submenu = submenus[index];
-    if (submenu) {
-      toggle.addEventListener('click', (event: MouseEvent) => {
-        event.preventDefault();
+    if (!submenu) return;
 
-        // SI ya esta abierto el submenu
-        const isOpen = submenu.classList.contains('visible');
+    toggle.addEventListener('click', (event: MouseEvent) => {
+      event.preventDefault();
 
-        // cierra los submenus
-        if (window.innerWidth > 768) {
-          // close others only on desktop
-          submenus.forEach((sm, i) => {
+      const isOpen = submenu.classList.contains('visible');
+
+      // Desktop: close others first
+      if (window.innerWidth > 768) {
+        submenus.forEach((sm, i) => {
           if (i !== index) sm.classList.remove('visible');
         });
-        }
-submenu.classList.toggle('visible');
+      }
 
-        // solo reabrir si no esta abierto ya
-        if (!isOpen) {
+      if (isOpen) {
+        // If already open, close immediately
+        submenu.classList.remove('visible');
+      } else {
+        // If closed, open with a small delay
+        setTimeout(() => {
           submenu.classList.add('visible');
-        }
-      });
-    }
+        }, 400); // 0.4s delay
+      }
+    });
   });
 });
-

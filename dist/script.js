@@ -50,25 +50,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const submenus = document.querySelectorAll('.submenu');
     toggles.forEach((toggle, index) => {
         const submenu = submenus[index];
-        if (submenu) {
-            toggle.addEventListener('click', (event) => {
-                event.preventDefault();
-                // SI ya esta abierto el submenu
-                const isOpen = submenu.classList.contains('visible');
-                // cierra los submenus
-                if (window.innerWidth > 768) {
-                    // close others only on desktop
-                    submenus.forEach((sm, i) => {
-                        if (i !== index)
-                            sm.classList.remove('visible');
-                    });
-                }
-                submenu.classList.toggle('visible');
-                // solo reabrir si no esta abierto ya
-                if (!isOpen) {
+        if (!submenu)
+            return;
+        toggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            const isOpen = submenu.classList.contains('visible');
+            // Desktop: close others first
+            if (window.innerWidth > 768) {
+                submenus.forEach((sm, i) => {
+                    if (i !== index)
+                        sm.classList.remove('visible');
+                });
+            }
+            if (isOpen) {
+                // If already open, close immediately
+                submenu.classList.remove('visible');
+            }
+            else {
+                // If closed, open with a small delay
+                setTimeout(() => {
                     submenu.classList.add('visible');
-                }
-            });
-        }
+                }, 400); // 0.4s delay
+            }
+        });
     });
 });
