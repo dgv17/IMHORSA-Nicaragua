@@ -117,9 +117,6 @@ header nav li.desplegable{
 header nav li.desplegable:hover .submenu {
   display: block;
 } 
-header nav li .submenu li {
-  padding: 8px 20px;
-}
 header nav li.desplegable > a::after {
   content: " ▾";
   font-size: 12px;
@@ -168,7 +165,7 @@ header .current a {
   text-align: left;
   max-width: 600px;
   padding-top: 10px;
-  padding-right: 400px;
+  /*padding-right: 400px;*/
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -186,12 +183,12 @@ header .current a {
   font-weight: 400;
   line-height: 1.3em;
 }
-#showcase h1,
+/*#showcase h1,
 #showcase h2 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+}*/
 #bloques .container {
   display: flex;
   flex-direction: row;
@@ -373,6 +370,44 @@ footer {
     transform: none !important;
   }
 }
+/* compus grandes */
+@media (min-width: 1200px) {
+  .container {
+    width: 75%;
+  }
+}
+/*laptops y compus pequeñas*/
+@media (max-width: 1199px) and (min-width: 992px) {
+  .container {
+    width: 85%;
+  }
+}
+@media (max-width: 991px) and (min-width: 769px) {
+  .container{
+    width: 90%;
+  }
+  #showcase .container {
+    padding: 0 20px;
+    max-width: 100%;
+    text-align: center;
+    align-items: center;
+  }
+
+  #showcase h1,
+  #showcase h2 {
+    white-space: normal; 
+    text-overflow: unset;
+    overflow: visible;
+  }
+  .wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  #servicios .Talleres,
+  #servicios .Accesorios,
+  #servicios .Repuestos {
+    flex-direction: column;
+  }
+}
 @media (max-width: 768px) {
   article#main-col,
   aside#sidebar {
@@ -450,6 +485,46 @@ footer {
   #servicios .Accesorios,
   #servicios .Repuestos {
     flex-direction: column;
+  }
+}
+
+/*tablets en horizontal*/
+@media (max-width: 1024px) and (orientation: landscape) {
+  .container {
+    width: 90%;
+  }
+  header .container {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+  header nav ul {
+    flex-direction: row;
+    gap: 20px;
+  }
+  header nav li {
+    padding: 0 15px;
+  }
+  #showcase .container {
+    padding-right: 40px;
+    max-width: 100%;
+  }
+  #showcase h1,
+  #showcase h2 {
+    white-space: normal;
+  }
+}
+/* telefonos L */
+@media (max-width: 600px) {
+  #showcase .container {
+    padding: 0 20px;
+    max-width: 100%;
+  }
+  .wrapper {
+    grid-template-columns: 1fr;
+  }
+  #servicios .container {
+    padding: 0 15px;
   }
 }
 @media (max-width: 400px) {
