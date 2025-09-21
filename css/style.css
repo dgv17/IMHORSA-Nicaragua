@@ -386,16 +386,42 @@ footer {
     text-align: center;
     gap: 20px;
   }
-  header nav ul{
+  
+  header nav ul {
     flex-direction: column;
+    align-items: stretch;
     gap: 10px;
     padding: 0;
   }
-  header nav li{
+
+  header nav li {
+    width: 100%;
+    text-align: left;
     padding: 0;
   }
-  header a{
-    font-size: 18px;
+
+  /* cambiar submenu para mobil */
+  .submenu {
+    position: static;       
+    background-color: #003366;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    margin-left: 1rem;      
+    display: none;          
+  }
+
+  .submenu.visible {
+    display: block;         
+  }
+
+  .submenu li {
+    padding: 10px 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .submenu a {
+    font-size: 14px;
   }
   #logo{
     height: 60px;
@@ -437,10 +463,6 @@ footer {
 
   header nav li {
     padding: 0;
-  }
-
-  header a {
-    font-size: 14px;
   }
 
   #logo {

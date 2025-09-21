@@ -53,11 +53,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (submenu) {
             toggle.addEventListener('click', (event) => {
                 event.preventDefault();
-                submenus.forEach((sm, i) => {
-                    if (i !== index)
-                        sm.classList.remove('visible');
-                });
+                // SI ya esta abierto el submenu
+                const isOpen = submenu.classList.contains('visible');
+                // cierra los submenus
+                if (window.innerWidth > 768) {
+                    // close others only on desktop
+                    submenus.forEach((sm, i) => {
+                        if (i !== index)
+                            sm.classList.remove('visible');
+                    });
+                }
                 submenu.classList.toggle('visible');
+                // solo reabrir si no esta abierto ya
+                if (!isOpen) {
+                    submenu.classList.add('visible');
+                }
             });
         }
     });
