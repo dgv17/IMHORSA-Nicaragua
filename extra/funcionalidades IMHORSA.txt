@@ -1,0 +1,21 @@
+el sistema no se utilizara para ventas si no mas bien para expandir la presencia del negocio y permitir a los clientes cotizar vehiculos de manera mas sencialla,
+la primera vista es la vista "HOME":
+esta vista será una bienvenida para el cliente, agradable visualmente que describirá brevemente a la empresa, tanto de que consiste, sus valores y los servicios que ofrecen
+la siguiente serie de vistas se encuentran en un submenu "VEHICULOS":
+vista "vehiculos":
+mostrará al cliente el catalago de todos los vehiculos con sus respectivas caracteristicas (bateria,precio,etc), esta vista tambien permitirá a los clientes naturales cotizar vehiculos individuales al reenviarlos a un formulario donde tendran que ingresar sus datos
+vista "compramayor":
+esta vista simplemente mostrará al usuario un formulario de llenado de rentas para eventos (rentas de mas de 5 vehiculos a la vez) donde pedirá al cliente llenar datos tanto de fecha del evento, modelo preferido, ubicacion del evento, datos de la empresa,etc; esta vista permitira a los clientes(empresas) cotizar rentas(o compras) al mayor
+para ambas vistas anteriores se guardaran los datos del cliente natural o cliente respectivamente al mandar el formulario y se enviará un correo con todos los detalles de su cotizacion al gerente de ventas y al cliente
+
+las siguientes vistas se encuentran en un submenu "SERVICIOS"
+Vista "talleres y mantenimiento", permitira al cliente visualizar un breve manual de como dar mantenimiento a su carrito de golf (cada cuanto hacer cambio de aceite, revisar bateria, llantas, etc.) y al final de esta vista se encontrará una opcion de contactarse con la empresa a travez de whatsapp para ver detalles de sus talleres
+Vista "repuestos", consistirá de un formulario que el cliente tendra que llenar con sus datos, el modelo de su vehiculo, y describir el problema que presenta
+Vista "accesorios", mostrará un listado de todos los accesorios de los vehiculos divididos por modelos y permitira al cliente hacer cotizaciones
+
+subfuncion ADMIN(todavia no seguro si se implementará)
+vista "ADMIN":
+primero necesitara ingresar un usuario y una contraseña para autentificarse, una vez validada la contraseña y usuario (probablemente sea 1 solo para el gerente por lo que no se necesitaran permisos distintos)
+segundo la vista mostrara diferentes listas(tablas) de los diferentes clientes, vehiculos, accesorios,etc. cada uno por su puesto con todos sus datos disponibles para la gestion
+para los vehiculos y accesorios no se manejara inventario como normalmente se hace si no que se realizará con un boolean(1 si hay existencia o 0 si no hay inventario)
+si el gerente cambia el stock a "0" el vehiculo/accesorio no aparecerá en las respectivas vistas

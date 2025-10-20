@@ -10,10 +10,14 @@
     />
     <meta name="author" content="Dylan Godoy" />
     <title>Home | IMHORSA</title>
-    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="/css/style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
       rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
     />
   </head>
 
@@ -22,11 +26,7 @@
       <div class="container">
         <div id="brand">
           <a href="index.html">
-            <img
-              src="/images/logo-cropped.png"
-              alt="IMHORSA logo"
-              id="logo"
-            />
+            <img src="/images/logo-cropped.png" alt="IMHORSA logo" id="logo" />
           </a>
         </div>
         <nav>
@@ -36,13 +36,17 @@
               <button class="menu-toggle">Vehiculos ▾</button>
               <ul class="submenu">
                 <li><a href="/html/Vehiculos.html">Todos los Vehiculos</a></li>
-                <li><a href="/html/CompraMayor.html">Cotizacion para Eventos</a></li>
+                <li>
+                  <a href="/html/CompraMayor.html">Cotizacion para Eventos</a>
+                </li>
               </ul>
             </li>
             <li class="desplegable">
               <button class="menu-toggle">Servicios ▾</button>
               <ul class="submenu">
-                <li><a href="/html/Talleres.html">Talleres y Mantienimiento</a></li>
+                <li>
+                  <a href="/html/Talleres.html">Talleres y Mantienimiento</a>
+                </li>
                 <li><a href="/html/Repuestos.html">Repuestos</a></li>
                 <li><a href="/html/Accesorios.html">Accesorios</a></li>
               </ul>
@@ -199,7 +203,32 @@
       </div>
     </section>
     <footer>
-      <p>Copyright &copy; 2025 - Importadora Horvilleur Sociedad Anónima</p>
+      <section class="footer">
+        <div class="sec-1">
+          <img src="/images/logo.jpg" alt="" />
+          <p>Importadora Horvilleur Sociedad Anónima</p>
+          <div class="footer-icon">
+            <a href=""><i class='bx bxl-whatsapp'></i></a>
+          </div>
+        </div>
+        <div class="sec-2">
+          <h4>Accesos directos</h4>
+          <li><a href="">Acerca de Nosotros</a></li>
+          <li><a href="">Valore de la Empresa</a></li>
+          <li><a href="">Servicios que ofrecemos</a></li>
+        </div>
+        <div class="sec-3">
+          <h4>Compañia</h4>
+          <li><a href="/html/Vehiculos.html">Vehiculos</a></li>
+          <li><a href="/html/Accesorios.html">Accesorios</a></li>
+          <li><a href="/html/Talleres.html">Mantenimiento</a></li>
+        </div>
+        <div class="sec-4">
+          <h4>Contactanos</h4>
+          <li><a href="">imhorsa@gmail.com</a></li>
+          <li><a href="">+505 87673747</a></li>
+        </div>
+      </section>
     </footer>
     <script src="/dist/script.js"></script>
   </body>

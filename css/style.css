@@ -344,12 +344,71 @@ ul#servicios li {
   padding: 20px;
   border: #ccc 1px solid;
 }
-footer {
-  padding: 20px;
-  margin-top: 20px;
+footer section{
+  padding: 80px 12% 60px;
+}
+.footer{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,auto));
+  gap: 3rem;
   background: #004080;
-  color: #ffffffa8;
-  text-align: center;
+  position: relative;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.sec-1 img{
+  width: 120px;
+  height: auto;
+}
+.sec-1 p{
+  max-width: 330px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26px;
+  margin: 18px 0;
+}
+.footer-icon i{
+  width: 40px;
+  height: 40px;
+  background: #003366;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-size: 18px;
+  border-radius: 50%;
+  transition: all .42s;
+}
+.footer-icon i:hover{
+  background: #47ec47;
+  transform: translateY(-5px);
+}
+.footer h4{
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.footer li{
+  list-style: none;
+  transition: all .42s;
+}
+.footer li:hover{
+  transform: translateX(5px);
+}
+.footer li a{
+  color: #DDD9D9;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 38px;
+  transition: all .42s;
+  text-decoration: none;
+}
+.footer li a:hover{
+  color: #47ec47;
 }
 @keyframes fadeUp {
   from {
@@ -525,6 +584,12 @@ footer {
   }
   #servicios .container {
     padding: 0 15px;
+  }
+  footer section{
+    padding: 80px 12% 25px;
+  }
+  .footer li a{
+    line-height: 28px;
   }
 }
 @media (max-width: 400px) {
