@@ -1,0 +1,21 @@
+{
+  "name": "proyecto-imhorsa",
+  "version": "1.0.0",
+  "description": "file readme probablemente no lo llene xd",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgv17/IMHORSA-Nicaragua.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dgv17/IMHORSA-Nicaragua/issues"
+  },
+  "homepage": "https://github.com/dgv17/IMHORSA-Nicaragua#readme"
+}
