@@ -146,8 +146,10 @@ function cargarModelos() {
             const selected = select.selectedOptions[0];
             if (selected && selected.dataset.precio) {
                 const precio = selected.dataset.precio;
-                document.getElementById("precio_base").value = precio;
-                document.getElementById("total_neto").value = precio;
+                document.getElementById("precio_base").value =
+                    precio;
+                document.getElementById("total_neto").value =
+                    precio;
             }
         });
     });
@@ -191,10 +193,10 @@ function validarTelefonoFront(telefono) {
     const regex = /^\d{4}-\d{4}$/;
     const repetido = /^(\d)\1{7}$/;
     if (!regex.test(telefono))
-        return "Formato inválido (8888-8888)";
+        return "Formato inválido (xxxx-xxxx)";
     const sinGuion = telefono.replace("-", "");
     if (repetido.test(sinGuion))
-        return "No puede repetir el mismo dígito 8 veces";
+        return "El numero de telefono no puede repetir el mismo dígito 8 veces";
     return null;
 }
 function validarCedulaFront(cedula) {
@@ -202,25 +204,46 @@ function validarCedulaFront(cedula) {
     if (!regex.test(cedula))
         return "Formato inválido (001-000000-0000A)";
     if (cedula.length !== 16)
-        return "Debe tener 16 caracteres";
+        return "La cedula debe tener 16 caracteres";
     return null;
 }
 function validarCorreoFront(correo) {
     if (correo.length > 50)
-        return "Correo demasiado largo (máx 50 caracteres)";
+        return "Correo demasiado extenso (máximo de 50 caracteres)";
     return null;
 }
 function validarDireccionFront(direccion) {
     if (direccion.length > 100)
-        return "Dirección demasiado larga (máx 100 caracteres)";
+        return "Dirección demasiado larga (máximo de 100 caracteres)";
     return null;
+}
+function mostrarNotif(mensaje, tipo = "loading") {
+    const notif = document.createElement("div");
+    notif.className = "loader-notification";
+    if (tipo === "error")
+        notif.classList.add("error");
+    if (tipo === "success")
+        notif.classList.add("success");
+    if (tipo === "loading") {
+        notif.innerHTML = `
+      <span>${mensaje}</span>
+      <div class="loader-dots">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+    }
+    else {
+        notif.innerHTML = `<span>${mensaje}</span>`;
+    }
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
 }
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("form");
     if (!form)
         return;
     form.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         e.preventDefault();
         const formData = new FormData(form);
         const data = {};
@@ -228,25 +251,19 @@ document.addEventListener("DOMContentLoaded", () => {
             data[key] = value.toString();
         });
         const errorTel = validarTelefonoFront(data.telefono);
-        if (errorTel) {
-            alert(errorTel);
-            return;
-        }
+        if (errorTel)
+            return mostrarNotif(errorTel, "error");
         const errorCed = validarCedulaFront(data.cedula);
-        if (errorCed) {
-            alert(errorCed);
-            return;
-        }
+        if (errorCed)
+            return mostrarNotif(errorCed, "error");
         const errorCorreo = validarCorreoFront(data.correo);
-        if (errorCorreo) {
-            alert(errorCorreo);
-            return;
-        }
+        if (errorCorreo)
+            return mostrarNotif(errorCorreo, "error");
         const errorDir = validarDireccionFront(data.direccion);
-        if (errorDir) {
-            alert(errorDir);
-            return;
-        }
+        if (errorDir)
+            return mostrarNotif(errorDir, "error");
+        // Loader de envío
+        mostrarNotif("Enviando solicitud", "loading");
         try {
             const res = yield fetch("/api/cotizacion/vehiculo", {
                 method: "POST",
@@ -255,16 +272,16 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const result = yield res.json();
             if (res.ok && result.id) {
-                alert("Cotización creada con ID: " + result.id);
+                mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
                 form.reset();
             }
             else {
-                alert("Error: " + ((_a = result.error) !== null && _a !== void 0 ? _a : "Error desconocido"));
+                mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
             }
         }
         catch (err) {
             console.error(err);
-            alert("Error de conexión con el servidor");
+            mostrarNotif("Error de conexión", "error");
         }
     }));
 });

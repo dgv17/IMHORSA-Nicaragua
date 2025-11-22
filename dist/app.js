@@ -9,6 +9,8 @@ const vehiculos_1 = __importDefault(require("./routes/vehiculos"));
 const catalogo_1 = __importDefault(require("./routes/catalogo"));
 const cotizacion_1 = __importDefault(require("./routes/cotizacion"));
 const path_1 = __importDefault(require("path"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
 app.use((0, cors_1.default)());

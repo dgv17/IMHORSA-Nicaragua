@@ -182,7 +182,9 @@ async function cargarModelos(): Promise<void> {
   const res = await fetch("/api/catalogo/modelos");
   const modelos: Modelo[] = await res.json();
 
-  const select = document.getElementById("modelo_vehiculo") as HTMLSelectElement;
+  const select = document.getElementById(
+    "modelo_vehiculo"
+  ) as HTMLSelectElement;
   if (!select) return;
 
   modelos.forEach((m: Modelo) => {
@@ -197,8 +199,10 @@ async function cargarModelos(): Promise<void> {
     const selected = select.selectedOptions[0];
     if (selected && selected.dataset.precio) {
       const precio = selected.dataset.precio;
-      (document.getElementById("precio_base") as HTMLInputElement).value = precio;
-      (document.getElementById("total_neto") as HTMLInputElement).value = precio;
+      (document.getElementById("precio_base") as HTMLInputElement).value =
+        precio;
+      (document.getElementById("total_neto") as HTMLInputElement).value =
+        precio;
     }
   });
 }
@@ -244,7 +248,8 @@ function validarTelefonoFront(telefono: string): string | null {
   const repetido = /^(\d)\1{7}$/;
   if (!regex.test(telefono)) return "Formato inválido (xxxx-xxxx)";
   const sinGuion = telefono.replace("-", "");
-  if (repetido.test(sinGuion)) return "El numero de telefono no puede repetir el mismo dígito 8 veces";
+  if (repetido.test(sinGuion))
+    return "El numero de telefono no puede repetir el mismo dígito 8 veces";
   return null;
 }
 
@@ -256,13 +261,37 @@ function validarCedulaFront(cedula: string): string | null {
 }
 
 function validarCorreoFront(correo: string): string | null {
-  if (correo.length > 50) return "Correo demasiado extenso (máximo de 50 caracteres)";
+  if (correo.length > 50)
+    return "Correo demasiado extenso (máximo de 50 caracteres)";
   return null;
 }
 
 function validarDireccionFront(direccion: string): string | null {
-  if (direccion.length > 100) return "Dirección demasiado larga (máximo de 100 caracteres)";
+  if (direccion.length > 100)
+    return "Dirección demasiado larga (máximo de 100 caracteres)";
   return null;
+}
+
+function mostrarNotif(
+  mensaje: string,
+  tipo: "error" | "success" | "loading" = "loading"
+) {
+  const notif: HTMLDivElement = document.createElement("div");
+  notif.className = "loader-notification";
+  if (tipo === "error") notif.classList.add("error");
+  if (tipo === "success") notif.classList.add("success");
+  if (tipo === "loading") {
+    notif.innerHTML = `
+      <span>${mensaje}</span>
+      <div class="loader-dots">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+  } else {
+    notif.innerHTML = `<span>${mensaje}</span>`;
+  }
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 3000);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -276,41 +305,32 @@ document.addEventListener("DOMContentLoaded", () => {
       data[key] = value.toString();
     });
     const errorTel = validarTelefonoFront(data.telefono);
-    if (errorTel) {
-      alert(errorTel);
-      return;
-    }
+    if (errorTel) return mostrarNotif(errorTel, "error");
     const errorCed = validarCedulaFront(data.cedula);
-    if (errorCed) {
-      alert(errorCed);
-      return;
-    }
+    if (errorCed) return mostrarNotif(errorCed, "error");
     const errorCorreo = validarCorreoFront(data.correo);
-    if (errorCorreo) {
-      alert(errorCorreo);
-      return;
-    }
+    if (errorCorreo) return mostrarNotif(errorCorreo, "error");
     const errorDir = validarDireccionFront(data.direccion);
-    if (errorDir) {
-      alert(errorDir);
-      return;
-    }
+    if (errorDir) return mostrarNotif(errorDir, "error");
+    // Loader de envío
+    mostrarNotif("Enviando solicitud", "loading");
     try {
       const res = await fetch("/api/cotizacion/vehiculo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const result: { id?: number; error?: string } = await res.json();
+      const result: { id?: number; message?: string; error?: string } =
+        await res.json();
       if (res.ok && result.id) {
-        alert("EXITO!");
+        mostrarNotif(result.message ?? "¡Éxito!", "success");
         form.reset();
       } else {
-        alert("Error: " + (result.error ?? "Error desconocido"));
+        mostrarNotif("Error: " + (result.error ?? "Error desconocido"), "error");
       }
     } catch (err) {
       console.error(err);
-      alert("Error de conexión con el servidor");
+      mostrarNotif("Error de conexión", "error");
     }
   });
 });

@@ -765,6 +765,61 @@ header .menu-toggle.current {
   font-weight: bold;
   text-decoration: none;
 }
+/* Notificación flotante */
+.loader-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+.loader-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #2c3e50;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+}
+
+.loader-notification.error {
+  background: #c0392b; /* rojo para errores */
+}
+
+.loader-notification.success {
+  background: #27ae60; /* verde para éxito */
+}
+
+.loader-dots span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin: 0 2px;
+  background: #fff;
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+.loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+
 footer section {
   padding: 80px 12% 60px;
 }
@@ -849,6 +904,11 @@ footer section {
     opacity: 1 !important;
     transform: none !important;
   }
+}
+/*para envio de formulario*/
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
 }
 /* compus grandes */
 @media (min-width: 1200px) {
