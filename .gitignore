@@ -1,4 +1,4 @@
 extra/
 .env
-images/
 dbfile/
+node_modules/

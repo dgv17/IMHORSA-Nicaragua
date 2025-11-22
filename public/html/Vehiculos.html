@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <title>Vehículos | IMHORSA</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+  </head>
+  <body>
+    <header id="main-header">
+      <div class="container">
+        <div id="brand">
+          <a href="/">
+            <img src="/images/logo-cropped.png" alt="IMHORSA logo" id="logo" />
+          </a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li class="desplegable">
+              <button class="menu-toggle current">Vehiculos ▾</button>
+              <ul class="submenu">
+                <li><a href="/html/Vehiculos.html">Todos los Vehiculos</a></li>
+                <li>
+                  <a href="/html/CompraMayor.html">Cotizacion para Eventos</a>
+                </li>
+              </ul>
+            </li>
+            <li class="desplegable">
+              <button class="menu-toggle">Servicios ▾</button>
+              <ul class="submenu">
+                <li>
+                  <a href="/html/Talleres.html">Talleres y Mantienimiento</a>
+                </li>
+                <li><a href="/html/Repuestos.html">Repuestos</a></li>
+                <li><a href="/html/Accesorios.html">Accesorios</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Sección Vehículos -->
+    <section id="vehiculos">
+      <div class="container vehiculos-header">
+        <h1 class="vehiculos-titulo">Vehículos</h1>
+        <select id="serie-select">
+          <option value="">Todas las series</option>
+          <option value="D-Max">D-Max</option>
+          <option value="D5">D5</option>
+          <option value="Golf">Golf</option>
+          <option value="Commercial">Commercial</option>
+          <option value="Personal">Personal</option>
+        </select>
+      </div>
+
+      <div class="container vehiculos-grid" id="vehiculos-grid">
+        <!-- Aquí se renderizan dinámicamente los vehículos -->
+      </div>
+    </section>
+
+    <!-- Footer igual al base -->
+    <footer>
+      <section class="footer">
+        <div class="sec-1">
+          <img src="/images/logo.jpg" alt="IMHORSA logo" />
+          <p>Importadora Horvilleur Sociedad Anónima</p>
+          <div class="footer-icon">
+            <a href=""><i class="bx bxl-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="sec-2">
+          <h4>Accesos directos</h4>
+          <li><a href="/HTML/Vehiculos.html">Vehículos</a></li>
+          <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+          <li><a href="/HTML/Talleres.html">Mantenimiento</a></li>
+        </div>
+        <div class="sec-3">
+          <h4>Compañía</h4>
+          <li><a href="/HTML/CompraMayor.html">Cotización para Eventos</a></li>
+          <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+        </div>
+        <div class="sec-4">
+          <h4>Contáctanos</h4>
+          <li><a href="mailto:imhorsa@gmail.com">imhorsa@gmail.com</a></li>
+          <li><a href="tel:+50587673747">+505 87673747</a></li>
+        </div>
+      </section>
+    </footer>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

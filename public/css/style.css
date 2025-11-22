@@ -81,7 +81,7 @@ header a:hover {
   color: #6cc24a;
   font-weight: bold;
 }
-header nav li.desplegable{
+header nav li.desplegable {
   position: relative;
   overflow: visible;
 }
@@ -116,7 +116,7 @@ header nav li.desplegable{
 /* Mostrar el submenu cuando pongas el mouse encima*/
 header nav li.desplegable:hover .submenu {
   display: block;
-} 
+}
 header nav li.desplegable > a::after {
   content: " ▾";
   font-size: 12px;
@@ -136,6 +136,10 @@ header nav li.desplegable > a::after {
 }
 header .highlight,
 header .current a {
+  color: #6cc24a;
+  font-weight: bold;
+}
+header .menu-toggle.current {
   color: #6cc24a;
   font-weight: bold;
 }
@@ -364,7 +368,7 @@ header .current a {
 .vehiculo-card {
   background: #f9f9f9;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
   transition: transform 0.3s ease;
@@ -376,10 +380,11 @@ header .current a {
 
 .vehiculo-card img {
   width: 100%;
-  height: auto;
+  height: 200px;
+  object-fit: contain;
+  background-color: #f4f4f4;
   border-radius: 8px;
   margin-bottom: 15px;
-  object-fit: cover;
 }
 
 .vehiculo-card h3 {
@@ -411,13 +416,361 @@ header .current a {
   background-color: #6cc24a;
 }
 
+/*detalle css*/
+.cotizar-btn {
+  background-color: #6cc24a;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-footer section{
+.cotizar-btn:hover {
+  background-color: #5ab03f;
+}
+
+.detalle-container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+  padding: 60px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.detalle-container .detalle-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.detalle-container .detalle-texto {
+  flex: 1 1 400px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.detalle-container .detalle-texto h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.detalle-container .detalle-texto p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #444;
+  text-align: justify;
+}
+
+.detalle-container .detalle-texto .precio {
+  font-size: 1.3rem;
+  color: #6cc24a;
+  font-weight: bold;
+}
+
+.detalle-container .cotizar-btn {
+  background-color: #6cc24a;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.detalle-container .cotizar-btn:hover {
+  background-color: #5ab03f;
+}
+
+.detalle-container .detalle-imagen {
+  flex: 1 1 400px;
+  text-align: center;
+}
+
+.detalle-container .detalle-imagen img {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  border: none;
+  box-shadow: none;
+  object-fit: contain;
+}
+.detalle-doble {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 16px;
+}
+
+.detalle-bloque {
+  background: transparent;
+  padding: 10px;
+  text-align: center;
+}
+
+.detalle-bloque img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.detalle-bloque h3 {
+  font-size: 1.4rem;
+  color: #004080;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.detalle-bloque p {
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.6;
+}
+
+.barra-cotizar {
+  display: block;
+  width: 100%;
+  background-color: #6cc24a;
+  padding: 20px 12%;
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.barra-contenido {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.barra-cotizar .cotizar-btn {
+  background-color: #fff;
+  color: #6cc24a;
+  border: 2px solid #6cc24a;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.barra-texto {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
+  text-transform: uppercase;
+}
+.barra-cotizar .cotizar-btn:hover {
+  background-color: #e6f5dc;
+}
+
+/* --- ESTILOS ESPECÍFICOS PARA EL FORMULARIO DE COTIZACIÓN --- */
+
+#cotizacion-section {
+  padding: 40px 0;
+  background-color: #f4f4f4; /* Fondo general */
+}
+
+#cotizacion-section .container {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start; /* Alinea arriba */
+}
+
+/* 1. BLOQUE IZQUIERDO (EL FORMULARIO) */
+.form-wrapper {
+  flex: 2; /* Ocupa 2/3 del espacio */
+  background-color: #e0e0e0; /* EL GRIS MÁS OSCURO QUE PEDISTE */
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+}
+
+.form-title {
+  color: #004080;
+  margin-top: 0;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.form-subtitle {
+  margin-bottom: 25px;
+  color: #555;
+  font-size: 14px;
+}
+
+/* Estilos de Inputs Generales */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 15px;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #004080;
+  box-shadow: 0 0 5px rgba(0, 64, 128, 0.2);
+}
+
+/* Filas superiores (Nombre/Cedula, etc) */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Separador visual */
+.divider {
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
+}
+
+/* ZONA INFERIOR DIVIDIDA (Ubicación vs Vehículo) */
+.form-split-area {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 50% - 50% */
+  gap: 30px;
+}
+
+.mini-heading {
+  font-size: 16px;
+  color: #004080;
+  border-bottom: 2px solid #6cc24a;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+/* Estilos Específicos para la Derecha Inferior (Precios) */
+.readonly-input {
+  background-color: #d1d1d1 !important;
+  color: #555;
+  font-weight: bold;
+  cursor: not-allowed;
+}
+
+.highlight-total {
+  background-color: #dff0d8 !important;
+  color: #004080;
+  font-size: 18px;
+  border: 1px solid #6cc24a;
+}
+
+.price-sequence {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+/* CAPTCHA y BOTON */
+.captcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+
+.submit-container {
+  text-align: center;
+}
+
+.full-width {
+  width: 100%;
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* 2. BLOQUE DERECHO (ASIDE) */
+.visual-aside {
+  width: 100%;
+  position: static; /* Quita sticky en móviles */
+  margin-bottom: 30px;
+}
+
+.aside-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.aside-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.aside-content {
+  padding: 20px;
+}
+.benefits-list {
+  margin: 15px 0;
+  list-style: none;
+}
+.benefits-list li {
+  margin-bottom: 10px;
+  color: #555;
+  font-size: 14px;
+}
+.benefits-list i {
+  color: #6cc24a;
+  margin-right: 8px;
+}
+.support-box {
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px dashed #ccc;
+}
+.support-box a {
+  color: #004080;
+  font-weight: bold;
+  text-decoration: none;
+}
+footer section {
   padding: 80px 12% 60px;
 }
-.footer{
+.footer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px,auto));
+  grid-template-columns: repeat(auto-fit, minmax(200px, auto));
   gap: 3rem;
   background: #004080;
   position: relative;
@@ -425,11 +778,11 @@ footer section{
   right: 0;
   bottom: 0;
 }
-.sec-1 img{
+.sec-1 img {
   width: 120px;
   height: auto;
 }
-.sec-1 p{
+.sec-1 p {
   max-width: 330px;
   color: #fff;
   font-size: 16px;
@@ -437,7 +790,7 @@ footer section{
   line-height: 26px;
   margin: 18px 0;
 }
-.footer-icon i{
+.footer-icon i {
   width: 40px;
   height: 40px;
   background: #003366;
@@ -448,34 +801,34 @@ footer section{
   margin-right: 10px;
   font-size: 18px;
   border-radius: 50%;
-  transition: all .42s;
+  transition: all 0.42s;
 }
-.footer-icon i:hover{
+.footer-icon i:hover {
   background: #47ec47;
   transform: translateY(-5px);
 }
-.footer h4{
+.footer h4 {
   color: #fff;
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 20px;
 }
-.footer li{
+.footer li {
   list-style: none;
-  transition: all .42s;
+  transition: all 0.42s;
 }
-.footer li:hover{
+.footer li:hover {
   transform: translateX(5px);
 }
-.footer li a{
-  color: #DDD9D9;
+.footer li a {
+  color: #ddd9d9;
   font-weight: 400;
   font-size: 16px;
   line-height: 38px;
-  transition: all .42s;
+  transition: all 0.42s;
   text-decoration: none;
 }
-.footer li a:hover{
+.footer li a:hover {
   color: #47ec47;
 }
 @keyframes fadeUp {
@@ -510,7 +863,7 @@ footer section{
   }
 }
 @media (max-width: 991px) and (min-width: 769px) {
-  .container{
+  .container {
     width: 90%;
   }
   #showcase .container {
@@ -522,7 +875,7 @@ footer section{
 
   #showcase h1,
   #showcase h2 {
-    white-space: normal; 
+    white-space: normal;
     text-overflow: unset;
     overflow: visible;
   }
@@ -534,6 +887,22 @@ footer section{
   #servicios .Repuestos {
     flex-direction: column;
   }
+  .barra-contenido {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+  .barra-cotizar .cotizar-btn {
+    width: auto;
+    margin-left: auto;
+  }
+  #cotizacion-section .container {
+    flex-direction: column;
+  }
+  .visual-aside {
+    width: 100%;
+  }
 }
 @media (max-width: 768px) {
   article#main-col,
@@ -542,13 +911,13 @@ footer section{
     text-align: center;
     width: 100%;
   }
-  header .container{
+  header .container {
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 20px;
   }
-  
+
   header nav ul {
     flex-direction: column;
     align-items: stretch;
@@ -564,32 +933,32 @@ footer section{
 
   /* cambiar submenu para mobil */
   .submenu {
-    position: static;       
+    position: static;
     background-color: #003366;
     box-shadow: none;
     border-radius: 0;
     padding: 0;
-    margin-left: 1rem;      
-    display: none;    
+    margin-left: 1rem;
+    display: none;
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.4s ease;      
+    transition: max-height 0.4s ease;
   }
 
   .submenu.visible {
-    max-height: 500px; 
-    display: block;         
+    max-height: 500px;
+    display: block;
   }
 
   .submenu li {
     padding: 10px 15px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .submenu a {
     font-size: 14px;
   }
-  #logo{
+  #logo {
     height: 60px;
     padding: 6px 20px;
   }
@@ -612,6 +981,21 @@ footer section{
   #servicios .Accesorios,
   #servicios .Repuestos {
     flex-direction: column;
+  }
+  .detalle-doble {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 28px 12px;
+  }
+  .detalle-bloque {
+    padding: 8px;
+  }
+  .detalle-bloque img {
+    border-radius: 6px;
+    margin-bottom: 10px;
+  }
+  #cotizacion-section .container {
+    flex-direction: column-reverse;
   }
 }
 
@@ -653,11 +1037,26 @@ footer section{
   #servicios .container {
     padding: 0 15px;
   }
-  footer section{
+  footer section {
     padding: 80px 12% 25px;
   }
-  .footer li a{
+  .footer li a {
     line-height: 28px;
+  }
+  .barra-contenido {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .barra-cotizar .cotizar-btn {
+    width: 100%;
+  }
+  .form-row,
+  .form-split-area {
+    grid-template-columns: 1fr;
+  }
+  .form-wrapper {
+    padding: 15px;
   }
 }
 @media (max-width: 400px) {
@@ -750,5 +1149,41 @@ footer section{
 
   #servicios a {
     font-size: 14px;
+  }
+  .form-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  #cotizacion-section .container {
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+
+  .form-row,
+  .form-split-area {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .captcha-container {
+    transform: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .g-recaptcha {
+    transform: scale(0.77); 
+    transform-origin: center center; 
   }
 }

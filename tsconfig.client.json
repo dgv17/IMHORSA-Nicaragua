@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "ESNext",
+    "lib": ["DOM", "ES6"],
+    "outDir": "public/js",
+    "rootDir": "src/client",
+    "strict": true,
+    "moduleResolution": "node",
+    "sourceMap": false
+  },
+  "include": ["src/client/**/*.ts"]
+}

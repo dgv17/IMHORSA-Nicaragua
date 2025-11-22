@@ -1,31 +1,16 @@
 {
   "compilerOptions": {
-    /* File Layout */
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "rootDir": "./src",
     "outDir": "./dist",
-    /* Language and Module Target */
-    "target": "ESNext",
-    "module": "ESNext",
-
-    /* Environment (DOM + modern JS) */
-    "lib": ["DOM", "ESNext"],
-
-    /* Strictness */
     "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    /* Output Options */
-    "sourceMap": false,
-    "declaration": true,
-    "declarationMap": true,
-
-    /* Recommended Options */
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "moduleDetection": "legacy",
-    "skipLibCheck": true
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "sourceMap": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/client"]
 }
