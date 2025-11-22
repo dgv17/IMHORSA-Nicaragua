@@ -186,6 +186,33 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarDepartamentos();
 });
 // Validaciones en frontend
+function validarNombreFront(nombre) {
+    const trimmed = nombre.trim();
+    // Longitud mínima y máxima
+    if (trimmed.length < 3) {
+        return "El nombre completo es demasiado corto";
+    }
+    if (trimmed.length > 50) {
+        return "El nombre completo no puede superar 50 caracteres";
+    }
+    // Evitar solo letras repetidas (ej: AAAAAA...)
+    const repetidoLetras = /^([A-Za-zÁÉÍÓÚÑ])\1{4,}$/; // 5+ veces la misma letra
+    if (repetidoLetras.test(trimmed)) {
+        return "El nombre no puede ser solo letras repetidas";
+    }
+    const repetidoNumeros = /^(\d)\1{4,}$/;
+    if (repetidoNumeros.test(trimmed)) {
+        return "Ingrese un nombre valido (nombre + nombre + apellido + apellido) o (nombre + apellido)";
+    }
+    if (!/[A-Za-zÁÉÍÓÚÑ]/.test(trimmed)) {
+        return "Ingrese un nombre valido (nombre + nombre + apellido + apellido) o (nombre + apellido)";
+    }
+    const soloLetrasSinEspacios = /^[A-Za-zÁÉÍÓÚÑ]{20,}$/;
+    if (soloLetrasSinEspacios.test(trimmed)) {
+        return "Ingrese un nombre valido (nombre + nombre + apellido + apellido) o (nombre + apellido)";
+    }
+    return null;
+}
 function validarTelefonoFront(telefono) {
     const regex = /^\d{4}-\d{4}$/;
     const repetido = /^(\d)\1{7}$/;
@@ -215,8 +242,39 @@ function validarDireccionFront(direccion) {
     return null;
 }
 function validarOrganizacionFront(nombre) {
-    if (nombre.length > 20)
+    const trimmed = nombre.trim();
+    if (trimmed.length > 20) {
         return "El nombre de la organización no puede superar 20 caracteres";
+    }
+    if (trimmed.length < 3) {
+        return "El nombre de la organización es demasiado corto, procure no usar siglas o abreviaciones";
+    }
+    const repetidoLetras = /^([A-Za-z])\1{4,}$/;
+    if (repetidoLetras.test(trimmed)) {
+        return "Ingrese un nombre de organizacion validovalido";
+    }
+    const repetidoNumeros = /^(\d)\1{4,}$/;
+    if (repetidoNumeros.test(trimmed)) {
+        return "Ingrese un nombre de organizacion valido";
+    }
+    if (!/[A-Za-z]/.test(trimmed)) {
+        return "Ingrese un nombre de organizacion valido";
+    }
+    return null;
+}
+function validarProblemaFront(problema) {
+    if (problema.length > 100) {
+        return "La descripción del problema no puede superar 100 caracteres";
+    }
+    // Evitar incoherencias
+    const repetido = /^(\d)\1{6,}$/; // 7 o más veces el mismo dígito
+    if (repetido.test(problema)) {
+        return "La descripción no puede ser solo números repetidos";
+    }
+    const soloLetras = /^[A-Za-z]{20,}$/; // 20+ letras sin espacios
+    if (soloLetras.test(problema)) {
+        return "La descripción parece incoherente (solo letras sin sentido)";
+    }
     return null;
 }
 function mostrarNotif(mensaje, tipo = "loading") {
@@ -243,6 +301,7 @@ function mostrarNotif(mensaje, tipo = "loading") {
 document.addEventListener("DOMContentLoaded", () => {
     const vehiculoForm = document.querySelector("form.vehiculo-form");
     const eventoForm = document.querySelector("form.evento-form");
+    const repuestosForm = document.querySelector("form.repuestos-form");
     // --- Vehículos ---
     if (vehiculoForm) {
         vehiculoForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
@@ -251,6 +310,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const formData = new FormData(vehiculoForm);
             const data = {};
             formData.forEach((value, key) => (data[key] = value.toString()));
+            // Validaciones
+            const errorNombre = validarNombreFront(data.nombre);
+            if (errorNombre)
+                return mostrarNotif(errorNombre, "error");
             const errorTel = validarTelefonoFront(data.telefono);
             if (errorTel)
                 return mostrarNotif(errorTel, "error");
@@ -313,6 +376,55 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (res.ok && result.id) {
                     mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
                     eventoForm.reset();
+                }
+                else {
+                    mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
+            }
+        }));
+    }
+    // --- Repuestos ---
+    if (repuestosForm) {
+        repuestosForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
+            e.preventDefault();
+            const formData = new FormData(repuestosForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value.toString()));
+            // Validaciones
+            const errorNombre = validarNombreFront(data.nombre);
+            if (errorNombre)
+                return mostrarNotif(errorNombre, "error");
+            const errorTel = validarTelefonoFront(data.telefono);
+            if (errorTel)
+                return mostrarNotif(errorTel, "error");
+            const errorCed = validarCedulaFront(data.cedula);
+            if (errorCed)
+                return mostrarNotif(errorCed, "error");
+            const errorCorreo = validarCorreoFront(data.correo);
+            if (errorCorreo)
+                return mostrarNotif(errorCorreo, "error");
+            const errorDir = validarDireccionFront(data.direccion);
+            if (errorDir)
+                return mostrarNotif(errorDir, "error");
+            const errorProb = validarProblemaFront(data.problema);
+            if (errorProb)
+                return mostrarNotif(errorProb, "error");
+            mostrarNotif("Enviando solicitud", "loading");
+            try {
+                const res = yield fetch("/api/cotizacion/repuestos", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                const result = yield res.json();
+                if (res.ok && result.id) {
+                    mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
+                    repuestosForm.reset();
                 }
                 else {
                     mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");

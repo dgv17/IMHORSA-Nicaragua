@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cotizar Repuestos y Taller | IMHORSA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  </head>
+  <body>
+    <header id="main-header">
+      <div class="container">
+        <div id="brand">
+          <a href="/"
+            ><img src="/images/logo-cropped.png" alt="IMHORSA logo" id="logo"
+          /></a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li class="desplegable">
+              <button class="menu-toggle">Vehiculos ▾</button>
+              <ul class="submenu">
+                <li><a href="/HTML/Vehiculos.html">Todos los Vehiculos</a></li>
+                <li>
+                  <a href="/HTML/CompraMayor.html">Cotizacion para Eventos</a>
+                </li>
+              </ul>
+            </li>
+            <li class="desplegable">
+              <button class="menu-toggle current">Servicios ▾</button>
+              <ul class="submenu">
+                <li>
+                  <a href="/HTML/Talleres.html">Talleres y Mantenimiento</a>
+                </li>
+                <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+                <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="cotizacion-section">
+      <div class="container">
+        
+        <div class="form-wrapper">
+          <h2 class="form-title">Solicitud de Repuestos / Taller</h2>
+          <p class="form-subtitle">
+            Describa su problema y le contactaremos con la pieza o solución exacta.
+          </p>
+
+          <form action="#" method="POST" class="repuestos-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombre">Nombre Completo:</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  name="nombre"
+                  placeholder="Juan Pérez"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label for="cedula">Cédula:</label>
+                <input
+                  type="text"
+                  id="cedula"
+                  name="cedula"
+                  placeholder="001-000000-0000A"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input
+                  type="email"
+                  id="correo"
+                  name="correo"
+                  placeholder="juan@ejemplo.com"
+                  required
+                  maxlength="50"
+                />
+              </div>
+              <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input
+                  type="tel"
+                  id="telefono"
+                  name="telefono"
+                  placeholder="8888-8888"
+                  required
+                  maxlength="9"
+                />
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="form-split-area">
+              
+              <div class="split-col location-col">
+                <h3 class="mini-heading">
+                  <i class="fas fa-map-marker-alt"></i> Ubicación
+                </h3>
+
+                <div class="form-group">
+                  <label for="departamento">Departamento:</label>
+                  <select id="departamento" name="departamento_id" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="municipio">Municipio:</label>
+                  <select id="municipio" name="municipio_id" required>
+                    <option value="" disabled selected>Seleccione...</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="direccion">Dirección Exacta:</label>
+                  <textarea
+                    id="direccion"
+                    name="direccion"
+                    rows="2"
+                    maxlength="100"
+                    placeholder="Barrio, calle, número de casa..."
+                  ></textarea>
+                </div>
+              </div>
+              <div class="split-col vehicle-col">
+                <h3 class="mini-heading">
+                  <i class="fas fa-tools"></i> Datos del Vehículo
+                </h3>
+                <div class="form-group">
+                  <label for="modelo_vehiculo">Modelo de su Vehículo:</label>
+                  <select id="modelo_vehiculo" name="modelo_id" required>
+                    <option value="" disabled selected>
+                      Seleccione Modelo...
+                    </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                  <label for="problema_descripcion">Descripción del Problema o Pieza:</label>
+                  <textarea
+                    id="problema_descripcion"
+                    name="problema"
+                    rows="5"
+                    placeholder="Ej: Necesito la batería para este modelo / Escucho un ruido en las llantas al correr..."
+                    required
+                    style="resize: none;" 
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="captcha-container">
+              <div
+                class="g-recaptcha"
+                data-sitekey="6LeWpxQsAAAAAJF2x56I_RxdoumBrDKp8_5eg0Z4"
+              ></div>
+            </div>
+
+            <div class="submit-container">
+              <button type="submit" class="cotizar-btn full-width">
+                <i class="fas fa-wrench"></i> Solicitar Revisión
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <aside class="visual-aside">
+          <div class="aside-card">
+            <div class="image-placeholder">
+              <img
+                src="/images/vehiculos/estatico/formestatico.jpg"
+                alt="Taller y Repuestos"
+              />
+            </div>
+            <div class="aside-content">
+              <h3>Servicio Certificado</h3>
+              <ul class="benefits-list">
+                <li><i class="fas fa-check-circle"></i> Repuestos Originales</li>
+                <li>
+                  <i class="fas fa-check-circle"></i> Diagnóstico Computarizado
+                </li>
+                <li>
+                  <i class="fas fa-check-circle"></i> Mano de obra calificada
+                </li>
+              </ul>
+              <div class="support-box">
+                <p>¿Emergencia?</p>
+                <a href="tel:+50588888888"
+                  ><i class="fas fa-phone"></i> Asistencia Vial</a
+                >
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      <section class="footer">
+        <div class="sec-1">
+          <img src="/images/logo.jpg" alt="IMHORSA logo" />
+          <p>Importadora Horvilleur Sociedad Anónima</p>
+          <div class="footer-icon">
+            <a href=""><i class="bx bxl-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="sec-2">
+          <h4>Accesos directos</h4>
+          <li><a href="/HTML/Vehiculos.html">Vehículos</a></li>
+          <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+          <li><a href="/HTML/Talleres.html">Mantenimiento</a></li>
+        </div>
+        <div class="sec-3">
+          <h4>Compañía</h4>
+          <li><a href="/HTML/CompraMayor.html">Cotización para Eventos</a></li>
+          <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+        </div>
+        <div class="sec-4">
+          <h4>Contáctanos</h4>
+          <li><a href="mailto:imhorsa@gmail.com">imhorsa@gmail.com</a></li>
+          <li><a href="tel:+50587673747">+505 87673747</a></li>
+        </div>
+      </section>
+    </footer>
+    <script src="/js/script.js"></script>
+  </body>
+</html>

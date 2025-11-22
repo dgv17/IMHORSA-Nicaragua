@@ -9,6 +9,7 @@ const vehiculos_1 = __importDefault(require("./routes/vehiculos"));
 const catalogo_1 = __importDefault(require("./routes/catalogo"));
 const cotizacion_1 = __importDefault(require("./routes/cotizacion"));
 const evento_1 = __importDefault(require("./routes/evento"));
+const repuestos_1 = __importDefault(require("./routes/repuestos"));
 const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
@@ -22,6 +23,7 @@ app.use("/api/vehiculos", vehiculos_1.default);
 app.use("/api/catalogo", catalogo_1.default);
 app.use("/api", cotizacion_1.default);
 app.use("/api", evento_1.default);
+app.use("/api", repuestos_1.default);
 app.get("/", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "index.html"));
 });
