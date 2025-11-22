@@ -3,6 +3,7 @@ import cors from "cors";
 import vehiculosRoutes from "./routes/vehiculos";
 import catalogoRoutes from "./routes/catalogo";
 import cotizacionRoutes from "./routes/cotizacion";
+import eventoRoutes from "./routes/evento";
 import path from "path";
 import dotenv from "dotenv";
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/vehiculos", vehiculosRoutes);
 app.use("/api/catalogo", catalogoRoutes);
 app.use("/api", cotizacionRoutes);
+app.use("/api", eventoRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));

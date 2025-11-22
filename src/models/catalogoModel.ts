@@ -4,7 +4,6 @@ export async function getDepartamentos() {
   const [rows] = await pool.query("SELECT id, nombre FROM departamentos");
   return rows;
 }
-
 export async function getMunicipios(departamentoId: number) {
   const [rows] = await pool.query(
     "SELECT id, nombre FROM municipios WHERE departamento_id = ?",
@@ -12,7 +11,6 @@ export async function getMunicipios(departamentoId: number) {
   );
   return rows;
 }
-
 export async function getModelos() {
   const [rows] = await pool.query(`
     SELECT m.id, m.nombre, v.precio, s.nombre AS serie

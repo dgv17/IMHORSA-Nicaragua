@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
         toggle.addEventListener("click", (event) => {
             event.preventDefault();
             const isOpen = submenu.classList.contains("visible");
-            // Desktop: close others first
             if (window.innerWidth > 768) {
                 submenus.forEach((sm, i) => {
                     if (i !== index)
@@ -72,11 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
             if (isOpen) {
-                // If already open, close immediately
                 submenu.classList.remove("visible");
             }
             else {
-                // If closed, open with a small delay
                 setTimeout(() => {
                     submenu.classList.add("visible");
                 }, 400); // 0.4s delay
@@ -217,6 +214,11 @@ function validarDireccionFront(direccion) {
         return "Dirección demasiado larga (máximo de 100 caracteres)";
     return null;
 }
+function validarOrganizacionFront(nombre) {
+    if (nombre.length > 20)
+        return "El nombre de la organización no puede superar 20 caracteres";
+    return null;
+}
 function mostrarNotif(mensaje, tipo = "loading") {
     const notif = document.createElement("div");
     notif.className = "loader-notification";
@@ -239,49 +241,87 @@ function mostrarNotif(mensaje, tipo = "loading") {
     setTimeout(() => notif.remove(), 3000);
 }
 document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form");
-    if (!form)
-        return;
-    form.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
-        e.preventDefault();
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value.toString();
-        });
-        const errorTel = validarTelefonoFront(data.telefono);
-        if (errorTel)
-            return mostrarNotif(errorTel, "error");
-        const errorCed = validarCedulaFront(data.cedula);
-        if (errorCed)
-            return mostrarNotif(errorCed, "error");
-        const errorCorreo = validarCorreoFront(data.correo);
-        if (errorCorreo)
-            return mostrarNotif(errorCorreo, "error");
-        const errorDir = validarDireccionFront(data.direccion);
-        if (errorDir)
-            return mostrarNotif(errorDir, "error");
-        // Loader de envío
-        mostrarNotif("Enviando solicitud", "loading");
-        try {
-            const res = yield fetch("/api/cotizacion/vehiculo", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
-            const result = yield res.json();
-            if (res.ok && result.id) {
-                mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
-                form.reset();
+    const vehiculoForm = document.querySelector("form.vehiculo-form");
+    const eventoForm = document.querySelector("form.evento-form");
+    // --- Vehículos ---
+    if (vehiculoForm) {
+        vehiculoForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
+            e.preventDefault();
+            const formData = new FormData(vehiculoForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value.toString()));
+            const errorTel = validarTelefonoFront(data.telefono);
+            if (errorTel)
+                return mostrarNotif(errorTel, "error");
+            const errorCed = validarCedulaFront(data.cedula);
+            if (errorCed)
+                return mostrarNotif(errorCed, "error");
+            const errorCorreo = validarCorreoFront(data.correo);
+            if (errorCorreo)
+                return mostrarNotif(errorCorreo, "error");
+            const errorDir = validarDireccionFront(data.direccion);
+            if (errorDir)
+                return mostrarNotif(errorDir, "error");
+            mostrarNotif("Enviando solicitud", "loading");
+            try {
+                const res = yield fetch("/api/cotizacion/vehiculo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                const result = yield res.json();
+                if (res.ok && result.id) {
+                    mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
+                    vehiculoForm.reset();
+                }
+                else {
+                    mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
+                }
             }
-            else {
-                mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
             }
-        }
-        catch (err) {
-            console.error(err);
-            mostrarNotif("Error de conexión", "error");
-        }
-    }));
+        }));
+    }
+    // --- Eventos ---
+    if (eventoForm) {
+        eventoForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
+            e.preventDefault();
+            const formData = new FormData(eventoForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value.toString()));
+            const errorOrg = validarOrganizacionFront(data.nombre);
+            if (errorOrg)
+                return mostrarNotif(errorOrg, "error");
+            const errorCorreo = validarCorreoFront(data.correo);
+            if (errorCorreo)
+                return mostrarNotif(errorCorreo, "error");
+            const errorDir = validarDireccionFront(data.direccion);
+            if (errorDir)
+                return mostrarNotif(errorDir, "error");
+            mostrarNotif("Enviando solicitud", "loading");
+            try {
+                const res = yield fetch("/api/cotizacion/evento", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                const result = yield res.json();
+                if (res.ok && result.id) {
+                    mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
+                    eventoForm.reset();
+                }
+                else {
+                    mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
+            }
+        }));
+    }
 });
