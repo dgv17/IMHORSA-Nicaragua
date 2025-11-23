@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talleres y Mantenimiento | IMHORSA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+  </head>
+  <body>
+    <header id="main-header">
+      <div class="container">
+        <div id="brand">
+          <a href="/"
+            ><img src="/images/logo-cropped.png" alt="IMHORSA logo" id="logo"
+          /></a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li class="desplegable">
+              <button class="menu-toggle">Vehiculos ▾</button>
+              <ul class="submenu">
+                <li><a href="/HTML/Vehiculos.html">Todos los Vehiculos</a></li>
+                <li>
+                  <a href="/HTML/CompraMayor.html">Cotizacion para Eventos</a>
+                </li>
+              </ul>
+            </li>
+            <li class="desplegable">
+              <button class="menu-toggle current">Servicios ▾</button>
+              <ul class="submenu">
+                <li>
+                  <a href="/HTML/Talleres.html" class="active-link"
+                    >Talleres y Mantenimiento</a
+                  >
+                </li>
+                <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+                <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <section id="mantenimiento-hero">
+      <div class="hero-overlay">
+        <div class="container">
+          <h1>Guía de Mantenimiento</h1>
+          <p>
+            Pasos básicos para mantener su carrito de golf en óptimas
+            condiciones.
+          </p>
+          <a href="#tabla-periodica" class="hero-btn">Ver Tabla Periódica</a>
+        </div>
+      </div>
+    </section>
+    <section class="mantenimiento-section">
+      <div class="container">
+        <div class="intro-grid">
+          <div class="section-title-block">
+            <h2>Importancia del Mantenimiento</h2>
+            <p>
+              Para asegurar un rendimiento libre de problemas, es vital seguir
+              un programa de mantenimiento preventivo. El mantenimiento regular
+              puede prevenir tiempos de inactividad y reparaciones costosas.
+            </p>
+            <p>
+              Todo vehículo que no funcione correctamente debe retirarse del
+              servicio hasta que se repare adecuadamente. Esto evitará mayores
+              daños al vehículo y la posibilidad de lesiones por condiciones
+              inseguras.
+            </p>
+          </div>
+          <div class="warning-box">
+            <h3>
+              <i class="fas fa-exclamation-triangle"></i> Precauciones de
+              Seguridad
+            </h3>
+            <ul>
+              <li>
+                Antes de dar servicio, lea la información relevante en el
+                manual.
+              </li>
+              <li>
+                Si encuentra problemas durante la inspección, no opere el
+                vehículo hasta repararlo.
+              </li>
+              <li>
+                Solo técnicos entrenados deben reparar el vehículo o el
+                cargador.
+              </li>
+              <li>
+                No intente dar servicio al motor cuando esté caliente (riesgo de
+                quemaduras).
+              </li>
+              <li>
+                Para evitar arranques accidentales, desconecte las baterías
+                antes de trabajar.
+              </li>
+              <li>
+                Use herramientas aisladas para evitar cortocircuitos al trabajar
+                con baterías.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="mantenimiento-section bg-light">
+      <div class="container">
+        <div class="section-split">
+          <div class="split-content">
+            <h2 class="border-title">Inspección Diaria Pre-Operación</h2>
+            <p>
+              Antes de que cada cliente use el vehículo, hágase las siguientes
+              preguntas para asegurar un rendimiento superior:
+            </p>
+            <ul class="check-list">
+              <li>¿Está el carrito completamente cargado?</li>
+              <li>¿La dirección responde correctamente?</li>
+              <li>¿Los frenos se activan adecuadamente?</li>
+              <li>¿El pedal del acelerador retorna libremente?</li>
+              <li>¿Están apretadas todas las tuercas y tornillos?</li>
+              <li>¿Tienen las llantas la presión adecuada?</li>
+              <li>¿Nivel de agua correcto en baterías (plomo-ácido)?</li>
+              <li>¿Cables de batería libres de corrosión y ajustados?</li>
+              <li>¿Hay fugas de aceite o agua?</li>
+            </ul>
+          </div>
+          <div class="split-content">
+            <h2 class="border-title">Presión de Llantas</h2>
+            <div class="info-card">
+              <i class="fas fa-tachometer-alt icon-large"></i>
+              <p>
+                Mantener la presión adecuada es tan importante como en su auto
+                familiar. Si la presión es baja, consumirá más energía.
+              </p>
+              <p>
+                <strong>Recomendación:</strong> Revise la presión mensualmente.
+                Mantenga la presión dentro de <strong>1-2 psi</strong> de lo
+                marcado en la llanta.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="mantenimiento-section">
+      <div class="container">
+        <h2 class="center-title">Cuidado de Baterías y Limpieza</h2>
+        <div class="grid-cards">
+          <div class="maint-card">
+            <div class="card-header">Baterías Plomo-Ácido</div>
+            <div class="card-body">
+              <p>
+                Necesitan agua limpia para sobrevivir. Niveles incorrectos
+                causan fallas prematuras.
+              </p>
+              <ul>
+                <li>
+                  El llenado de agua siempre se realiza <strong>después</strong>
+                  de cargar, nunca antes.
+                </li>
+                <li>Use agua desionizada o purificada.</li>
+                <li>
+                  Limpie los bornes con solución de agua y bicarbonato
+                  mensualmente.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="maint-card">
+            <div class="card-header">Baterías de Litio</div>
+            <div class="card-body">
+              <p>Tecnología más avanzada con menos mantenimiento.</p>
+              <ul>
+                <li>
+                  Asegure conectar el cargador bifásico correctamente (positivo
+                  con positivo).
+                </li>
+                <li>
+                  Es prudente cargar la batería después de cada uso del carrito.
+                </li>
+                <li>No requieren rellenado de agua.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="maint-card">
+            <div class="card-header">Limpieza General</div>
+            <div class="card-body">
+              <p>Mantenga la estética y seguridad.</p>
+              <ul>
+                <li>
+                  <strong>Evite silicona:</strong> No use productos base
+                  silicona en pisos o pedales (resbaloso = peligro).
+                </li>
+                <li>
+                  <strong>Cuidado con la presión:</strong> El lavado a presión
+                  puede dañar pintura y eléctricos. Una manguera de jardín es
+                  más segura.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="tabla-periodica" class="mantenimiento-section bg-light">
+      <div class="container column-layout">
+        <h2 class="border-title">Tabla de Mantenimiento Periódico</h2>
+        <p style="margin-bottom: 20px">
+          <strong>Leyenda:</strong> 1D (Diario), 1W (Semanal), 1M (Mensual), 1Q
+          (Trimestral), 1Y (Anual).
+        </p>
+        <div class="table-responsive">
+          <table class="maintenance-table">
+            <thead>
+              <tr>
+                <th>Ítem</th>
+                <th>Descripción</th>
+                <th>1D</th>
+                <th>1W</th>
+                <th>1M</th>
+                <th>1Q</th>
+                <th>1Y</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="section-header">
+                <td colspan="7">Batería</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>1. Verifique los daños que puedan ocurrir en la superficie de la batería.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>2. Cargar la batería.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>3. Apretar tuerca en cable de la batería.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>4. Apretar tuerca de terminal de batería.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>5. Revisar si la batería está sobrecargada.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>6. Verifique el estado de salud SOH de la batería.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>7. Compruebe si la batería está completamente cargada.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>8. Limpie la superficie de la batería.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr class="section-header">
+                <td colspan="7">Cargador</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  9. Observar estado de carga, revisar temperatura del enchufe.
+                </td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  10. Limpiar superficie del cargador (evitar agua dentro).
+                </td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr class="section-header">
+                <td colspan="7">Motor y Controlador</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>11. Revisar apriete de terminales (Apagar energía).</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>12. Limpie la superficie del controlador.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>13. Verifique que el solenoide esté en orden, verificando el punto de contacto.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>14. Revisar si entró agua al motor.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>15. Verifique que todos los conectores del motor y del controlador estén bien apretados.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>16. Revisar funcionamiento del pedal acelerador.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>17. Compruebe si el pedal del freno está firme y se puede soltar libremente.</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>18. Verifique si es necesario reemplazar el tambor y la zapata de freno.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+              </tr>
+              <tr class="section-header">
+                <td colspan="7">Chasis y Carrocería</td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>19. Revisar función de freno de mano.</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>20. Verifique el nivel de líquido del tanque de líquido de frenos.</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>21. Revisar presión y superficie de llantas.</td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>22. Verifique si el amortiguador tiene fugas o no.</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>23. Apriete el perno del eje.</td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>24. Verifique si hay suficiente aceite dentro de la caja de cambios del eje trasero.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>25. Agregue grasa al cubo delantero y a la caja de dirección.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>26. Ajuste la suspensión delantera y trasera.</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>27. Limpiar carrocería y asientos.</td>
+                <td><i class="fas fa-check"></i></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="cta-box" style="margin-top: 40px; text-align: center">
+          <p>¿Necesita un mantenimiento profesional o repuestos?</p>
+          <a href="/HTML/Repuestos.html" class="cotizar-btn"
+            >Agendar Cita de Taller</a
+          >
+        </div>
+      </div>
+    </section>
+    <footer>
+      <section class="footer">
+        <div class="sec-1">
+          <img src="/images/logo.jpg" alt="IMHORSA logo" />
+          <p>Importadora Horvilleur Sociedad Anónima</p>
+          <div class="footer-icon">
+            <a href="https://wa.me/50587673747?text=Hola%2C%20me%20gustar%C3%ADa%20saber%20m%C3%A1s%20sobre%20tus%20servicios."><i class="bx bxl-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="sec-2">
+          <h4>Accesos directos</h4>
+          <li><a href="/HTML/Vehiculos.html">Vehículos</a></li>
+          <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+          <li><a href="/HTML/Talleres.html">Mantenimiento</a></li>
+        </div>
+        <div class="sec-3">
+          <h4>Compañía</h4>
+          <li><a href="/HTML/CompraMayor.html">Cotización para Eventos</a></li>
+          <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+        </div>
+        <div class="sec-4">
+          <h4>Contáctanos</h4>
+          <li><a href="mailto:imhorsa@gmail.com">imhorsa@gmail.com</a></li>
+          <li><a href="tel:+50587673747">+505 87673747</a></li>
+        </div>
+      </section>
+    </footer>
+    <script src="/js/script.js"></script>
+  </body>
+</html>
