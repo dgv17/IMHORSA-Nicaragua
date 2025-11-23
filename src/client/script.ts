@@ -260,9 +260,44 @@ async function cargarDepartamentos(): Promise<void> {
     });
   });
 }
+async function cargarAccesorios(): Promise<void> {
+  const res = await fetch("/api/accesorios");
+  const accesorios: Accesorio[] = await res.json();
+
+  const select = document.getElementById(
+    "accesorio_select"
+  ) as HTMLSelectElement;
+  if (!select) return;
+  accesorios.forEach((a: Accesorio) => {
+    const opt = document.createElement("option");
+    opt.value = String(a.id);
+    opt.textContent = `${a.serie} - ${a.nombre}`;
+    opt.dataset.precio = String(a.precio);
+    select.appendChild(opt);
+  });
+  select.addEventListener("change", () => {
+    const selected = select.selectedOptions[0];
+    if (selected && selected.dataset.precio) {
+      const precio = Number(selected.dataset.precio);
+      (document.getElementById("precio_base") as HTMLInputElement).value =
+        precio.toFixed(2);
+
+      const cantidad = Number(
+        (document.getElementById("cantidad") as HTMLInputElement).value || 1
+      );
+      (document.getElementById("total_neto") as HTMLInputElement).value = (
+        precio * cantidad
+      ).toFixed(2);
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  cargarAccesorios();
+});
 document.addEventListener("DOMContentLoaded", () => {
   cargarModelos();
   cargarDepartamentos();
+  cargarAccesorios();
 });
 // Validaciones en frontend
 function validarNombreFront(nombre: string): string | null {
@@ -503,6 +538,66 @@ document.addEventListener("DOMContentLoaded", () => {
         if (res.ok && result.id) {
           mostrarNotif(result.message ?? "¡Éxito!", "success");
           repuestosForm.reset();
+        } else {
+          mostrarNotif(
+            "Error: " + (result.error ?? "Error desconocido"),
+            "error"
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        mostrarNotif("Error de conexión", "error");
+      }
+    });
+  }
+  // --- Accesorios ---
+  const accesoriosForm = document.querySelector(
+    "form.accesorios-form"
+  ) as HTMLFormElement | null;
+
+  if (accesoriosForm) {
+    accesoriosForm.addEventListener("submit", async (e: Event) => {
+      e.preventDefault();
+      const formData = new FormData(accesoriosForm);
+      const data: Record<string, string> = {};
+      formData.forEach((value, key) => (data[key] = value.toString()));
+      // Recalcular total neto antes de enviar
+      const precio = Number(
+        (document.getElementById("precio_base") as HTMLInputElement).value || 0
+      );
+      const cantidadCalc = Number(
+        (document.getElementById("cantidad") as HTMLInputElement).value || 1
+      );
+      const totalNeto = precio * cantidadCalc;
+      (document.getElementById("total_neto") as HTMLInputElement).value =
+        totalNeto.toFixed(2);
+      data.total_neto = totalNeto.toFixed(2);
+      // Validaciones
+      const errorNombre = validarNombreFront(data.nombre);
+      if (errorNombre) return mostrarNotif(errorNombre, "error");
+      const errorTel = validarTelefonoFront(data.telefono);
+      if (errorTel) return mostrarNotif(errorTel, "error");
+      const errorCed = validarCedulaFront(data.cedula);
+      if (errorCed) return mostrarNotif(errorCed, "error");
+      const errorCorreo = validarCorreoFront(data.correo);
+      if (errorCorreo) return mostrarNotif(errorCorreo, "error");
+      const errorDir = validarDireccionFront(data.direccion);
+      if (errorDir) return mostrarNotif(errorDir, "error");
+      const cantidad = Number(data.cantidad);
+      if (isNaN(cantidad) || cantidad <= 0) {
+        return mostrarNotif("La cantidad debe ser mayor a 0", "error");
+      }
+      mostrarNotif("Enviando solicitud", "loading");
+      try {
+        const res = await fetch("/api/accesorios/cotizacion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        const result = await res.json();
+        if (res.ok && result.id) {
+          mostrarNotif(result.message ?? "¡Éxito!", "success");
+          accesoriosForm.reset();
         } else {
           mostrarNotif(
             "Error: " + (result.error ?? "Error desconocido"),

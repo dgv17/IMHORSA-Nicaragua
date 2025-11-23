@@ -218,9 +218,39 @@ function cargarDepartamentos() {
         }));
     });
 }
+function cargarAccesorios() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const res = yield fetch("/api/accesorios");
+        const accesorios = yield res.json();
+        const select = document.getElementById("accesorio_select");
+        if (!select)
+            return;
+        accesorios.forEach((a) => {
+            const opt = document.createElement("option");
+            opt.value = String(a.id);
+            opt.textContent = `${a.serie} - ${a.nombre}`;
+            opt.dataset.precio = String(a.precio);
+            select.appendChild(opt);
+        });
+        select.addEventListener("change", () => {
+            const selected = select.selectedOptions[0];
+            if (selected && selected.dataset.precio) {
+                const precio = Number(selected.dataset.precio);
+                document.getElementById("precio_base").value =
+                    precio.toFixed(2);
+                const cantidad = Number(document.getElementById("cantidad").value || 1);
+                document.getElementById("total_neto").value = (precio * cantidad).toFixed(2);
+            }
+        });
+    });
+}
+document.addEventListener("DOMContentLoaded", () => {
+    cargarAccesorios();
+});
 document.addEventListener("DOMContentLoaded", () => {
     cargarModelos();
     cargarDepartamentos();
+    cargarAccesorios();
 });
 // Validaciones en frontend
 function validarNombreFront(nombre) {
@@ -461,6 +491,64 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (res.ok && result.id) {
                     mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
                     repuestosForm.reset();
+                }
+                else {
+                    mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
+            }
+        }));
+    }
+    // --- Accesorios ---
+    const accesoriosForm = document.querySelector("form.accesorios-form");
+    if (accesoriosForm) {
+        accesoriosForm.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
+            e.preventDefault();
+            const formData = new FormData(accesoriosForm);
+            const data = {};
+            formData.forEach((value, key) => (data[key] = value.toString()));
+            // Recalcular total neto antes de enviar
+            const precio = Number(document.getElementById("precio_base").value || 0);
+            const cantidadCalc = Number(document.getElementById("cantidad").value || 1);
+            const totalNeto = precio * cantidadCalc;
+            document.getElementById("total_neto").value =
+                totalNeto.toFixed(2);
+            data.total_neto = totalNeto.toFixed(2);
+            // Validaciones
+            const errorNombre = validarNombreFront(data.nombre);
+            if (errorNombre)
+                return mostrarNotif(errorNombre, "error");
+            const errorTel = validarTelefonoFront(data.telefono);
+            if (errorTel)
+                return mostrarNotif(errorTel, "error");
+            const errorCed = validarCedulaFront(data.cedula);
+            if (errorCed)
+                return mostrarNotif(errorCed, "error");
+            const errorCorreo = validarCorreoFront(data.correo);
+            if (errorCorreo)
+                return mostrarNotif(errorCorreo, "error");
+            const errorDir = validarDireccionFront(data.direccion);
+            if (errorDir)
+                return mostrarNotif(errorDir, "error");
+            const cantidad = Number(data.cantidad);
+            if (isNaN(cantidad) || cantidad <= 0) {
+                return mostrarNotif("La cantidad debe ser mayor a 0", "error");
+            }
+            mostrarNotif("Enviando solicitud", "loading");
+            try {
+                const res = yield fetch("/api/accesorios/cotizacion", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                const result = yield res.json();
+                if (res.ok && result.id) {
+                    mostrarNotif((_a = result.message) !== null && _a !== void 0 ? _a : "¡Éxito!", "success");
+                    accesoriosForm.reset();
                 }
                 else {
                     mostrarNotif("Error: " + ((_b = result.error) !== null && _b !== void 0 ? _b : "Error desconocido"), "error");

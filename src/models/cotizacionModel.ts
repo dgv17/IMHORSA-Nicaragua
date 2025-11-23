@@ -70,36 +70,3 @@ export async function crearCotizacionVehiculo(data: any) {
 
   return cotizacionId;
 }
-export async function crearCotizacionAccesorio(data: any): Promise<number> {
-  const connection = await pool.getConnection();
-  try {
-    const [cotizacionResult]: any = await connection.query(
-      "INSERT INTO cotizaciones (tipo, nombre, cedula, correo, telefono, direccion, departamento_id, municipio_id, total_neto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [
-        "accesorio",
-        data.nombre,
-        data.cedula,
-        data.correo,
-        data.telefono,
-        data.direccion,
-        data.departamento_id,
-        data.municipio_id,
-        data.total_neto,
-      ]
-    );
-    const cotizacionId = cotizacionResult.insertId;
-    await connection.query(
-      "INSERT INTO cotizacion_accesorio (cotizacion_id, accesorio_id, cantidad, precio_unitario, total) VALUES (?, ?, ?, ?, ?)",
-      [
-        cotizacionId,
-        data.accesorio_id,
-        data.cantidad,
-        data.precio_base,
-        data.total_neto,
-      ]
-    );
-    return cotizacionId;
-  } finally {
-    connection.release();
-  }
-}

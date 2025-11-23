@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { pool } from "../models/db";
 import {
-  crearCotizacionVehiculo,
-  crearCotizacionAccesorio,
+  crearCotizacionVehiculo
 } from "../models/cotizacionModel";
 import nodemailer from "nodemailer";
 import { validarTelefono, validarCedula } from "../utils/validaciones";
