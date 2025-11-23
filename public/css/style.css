@@ -578,8 +578,6 @@ header .menu-toggle.current {
   background-color: #e6f5dc;
 }
 
-/* --- ESTILOS ESPECÍFICOS PARA EL FORMULARIO DE COTIZACIÓN --- */
-
 #cotizacion-section {
   padding: 40px 0;
   background-color: #f4f4f4; /* Fondo general */
@@ -590,11 +588,9 @@ header .menu-toggle.current {
   gap: 30px;
   align-items: flex-start; /* Alinea arriba */
 }
-
-/* 1. BLOQUE IZQUIERDO (EL FORMULARIO) */
 .form-wrapper {
-  flex: 2; /* Ocupa 2/3 del espacio */
-  background-color: #e0e0e0; /* EL GRIS MÁS OSCURO QUE PEDISTE */
+  flex: 2;
+  background-color: #e0e0e0;
   padding: 30px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -638,7 +634,6 @@ header .menu-toggle.current {
   font-size: 15px;
   background: #fff;
 }
-
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -646,22 +641,16 @@ header .menu-toggle.current {
   border-color: #004080;
   box-shadow: 0 0 5px rgba(0, 64, 128, 0.2);
 }
-
-/* Filas superiores (Nombre/Cedula, etc) */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-
-/* Separador visual */
 .divider {
   border: 0;
   border-top: 1px solid #ccc;
   margin: 20px 0;
 }
-
-/* ZONA INFERIOR DIVIDIDA (Ubicación vs Vehículo) */
 .form-split-area {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 50% - 50% */
@@ -675,22 +664,18 @@ header .menu-toggle.current {
   padding-bottom: 5px;
   margin-bottom: 15px;
 }
-
-/* Estilos Específicos para la Derecha Inferior (Precios) */
 .readonly-input {
   background-color: #d1d1d1 !important;
   color: #555;
   font-weight: bold;
   cursor: not-allowed;
 }
-
 .highlight-total {
   background-color: #dff0d8 !important;
   color: #004080;
   font-size: 18px;
   border: 1px solid #6cc24a;
 }
-
 .price-sequence {
   display: flex;
   flex-direction: column;
@@ -700,8 +685,6 @@ header .menu-toggle.current {
   background: rgba(255, 255, 255, 0.5);
   border-radius: 8px;
 }
-
-/* CAPTCHA y BOTON */
 .captcha-container {
   display: flex;
   justify-content: center;
@@ -710,7 +693,6 @@ header .menu-toggle.current {
   overflow-x: auto;
   padding: 10px 0;
 }
-
 .submit-container {
   text-align: center;
 }
@@ -722,10 +704,9 @@ header .menu-toggle.current {
   font-weight: bold;
 }
 
-/* 2. BLOQUE DERECHO (ASIDE) */
 .visual-aside {
   width: 100%;
-  position: static; /* Quita sticky en móviles */
+  position: static;
   margin-bottom: 30px;
 }
 
@@ -768,7 +749,7 @@ header .menu-toggle.current {
 }
 #mantenimiento-hero {
   background: url("../images/vehiculos/estatico/taller-hero.png") center
-    center/cover no-repeat; /* Asegúrate de tener una imagen oscura o usa un color */
+    center/cover no-repeat;
   background-color: #004080; /* Fallback color */
   height: 400px;
   display: flex;
@@ -990,6 +971,140 @@ header .menu-toggle.current {
 }
 .maintenance-table tbody tr:hover {
   background-color: #f1f1f1;
+}
+/* Accesorios */
+#accesorios-hero {
+  background: url("../images/vehiculos/estatico/accesorio_hero.png") center
+    center/cover no-repeat; /* Ajusta la ruta a tu imagen real */
+  background-color: #333; /* Fallback */
+  height: 350px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  color: white;
+  position: relative;
+}
+#accesorios-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+}
+#accesorios-hero .container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  height: 100%;
+  max-width: 600px;
+  padding-left: 60px;
+  z-index: 2;
+}
+#accesorios-hero h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  max-width: 550px; /* Ajusta este valor si necesitas más o menos espacio */
+  margin-left: 0;
+}
+#accesorios-hero p {
+  font-size: 1.2rem;
+  font-weight: 400;
+  text-align: left;
+  max-width: 550px; /* Ajusta este valor si necesitas más o menos espacio */
+  margin-left: 0;
+}
+#lista-accesorios {
+  padding: 60px 0;
+  background-color: #fff;
+}
+.serie-header {
+  width: 100%;
+  margin-bottom: 30px;
+}
+.serie-header h2 {
+  color: #004080;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+.serie-divider {
+  border: 0;
+  height: 1px;
+  background-color: #333;
+  width: 100%;
+  margin: 0;
+}
+a.vehiculo-card.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+span.vehiculo-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #004080;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.3s ease;
+  margin-top: 15px;
+}
+a.vehiculo-card.card-link:hover span.vehiculo-btn {
+  background-color: #6cc24a;
+}
+.cta-banner {
+  background-color: #6cc24a;
+  padding: 30px 0;
+  margin-top: 40px;
+}
+.cta-banner .container {
+  justify-content: space-between;
+  align-items: center;
+}
+.cta-banner h2 {
+  color: white;
+  margin: 0;
+  text-transform: uppercase;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+}
+.btn-white {
+  background-color: white;
+  color: #6cc24a;
+  padding: 12px 35px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+#accesorio_select {
+  max-width: 250px;              
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+#accesorio_select option {
+  white-space: normal;
+  word-wrap: break-word;
 }
 /* Notificación flotante */
 .loader-notification {
@@ -1314,6 +1429,32 @@ footer section {
     padding: 0 12px;
     box-sizing: border-box;
   }
+  #accesorios-hero {
+    background-position: left center;
+  }
+  #accesorios-hero .container {
+    padding: 0 20px;
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+  #accesorios-hero h1,
+  #accesorios-hero p {
+    max-width: 100%;
+  }
+  .cta-banner .container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .cta-banner h2 {
+    font-size: 1.4rem;
+  }
+  .cta-banner .btn-white {
+    width: 100%;
+    text-align: center;
+    padding: 12px 0;
+  }
 }
 
 /*tablets en horizontal*/
@@ -1374,6 +1515,10 @@ footer section {
   }
   .form-wrapper {
     padding: 15px;
+  }
+  #accesorios-hero .container {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
   }
 }
 @media (max-width: 400px) {
@@ -1502,5 +1647,10 @@ footer section {
   .g-recaptcha {
     transform: scale(0.77);
     transform-origin: center center;
+  }
+  #accesorios-hero h1,
+  #accesorios-hero p {
+    max-width: 100% !important;
+    word-wrap: break-word;
   }
 }

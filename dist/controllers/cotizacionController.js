@@ -22,7 +22,6 @@ async function postCotizacionVehiculo(req, res) {
             return res.status(400).json({ error: "Captcha inválido" });
         }
         const { telefono, cedula, correo, direccion } = req.body;
-        // Validaciones
         const errorTel = (0, validaciones_1.validarTelefono)(telefono);
         if (errorTel)
             return res.status(400).json({ error: errorTel });
@@ -35,7 +34,6 @@ async function postCotizacionVehiculo(req, res) {
             return res.status(400).json({ error: "Dirección demasiado larga" });
         await connection.beginTransaction();
         const id = await (0, cotizacionModel_1.crearCotizacionVehiculo)(req.body);
-        // Generar número de factura con prefijo IMH
         const numeroFactura = `IMH-${String(id).padStart(6, "0")}`;
         await connection.query("UPDATE cotizaciones SET numero_factura = ? WHERE id = ?", [numeroFactura, id]);
         const [[departamento]] = await connection.query("SELECT nombre FROM departamentos WHERE id = ?", [req.body.departamento_id]);
@@ -45,7 +43,6 @@ async function postCotizacionVehiculo(req, res) {
         FROM modelos mo
         JOIN series s ON mo.serie_id = s.id
         WHERE mo.id = ?`, [req.body.modelo_id]);
-        // Configurar transporter
         const transporter = nodemailer_1.default.createTransport({
             service: "gmail",
             auth: {
@@ -53,7 +50,6 @@ async function postCotizacionVehiculo(req, res) {
                 pass: process.env.EMAIL_PASS,
             },
         });
-        // Comprobante HTML con número de factura
         const mensajeHTML = `
     <div style="font-family: Arial, sans-serif; color: #333;">
         <h2 style="color:#2c3e50;">Su cotización fue registrada correctamente!</h2>

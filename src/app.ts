@@ -5,6 +5,7 @@ import catalogoRoutes from "./routes/catalogo";
 import cotizacionRoutes from "./routes/cotizacion";
 import eventoRoutes from "./routes/evento";
 import repuestosRoutes from "./routes/repuestos";
+import accesoriosRoutes from "./routes/accesorios";
 import path from "path";
 import dotenv from "dotenv";
 
@@ -22,6 +23,7 @@ app.use("/api/catalogo", catalogoRoutes);
 app.use("/api", cotizacionRoutes);
 app.use("/api", eventoRoutes);
 app.use("/api", repuestosRoutes);
+app.use("/api/accesorios", accesoriosRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));

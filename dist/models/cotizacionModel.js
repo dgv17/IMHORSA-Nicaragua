@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.crearCotizacionVehiculo = crearCotizacionVehiculo;
+exports.crearCotizacionAccesorio = crearCotizacionAccesorio;
 const db_1 = require("./db");
 const validaciones_1 = require("../utils/validaciones");
 async function crearCotizacionVehiculo(data) {
@@ -44,5 +45,33 @@ async function crearCotizacionVehiculo(data) {
     const cotizacionId = cotResult.insertId;
     await db_1.pool.query("INSERT INTO cotizacion_vehiculo (cotizacion_id, vehiculo_id) VALUES (?, ?)", [cotizacionId, data.modelo_id]);
     return cotizacionId;
+}
+async function crearCotizacionAccesorio(data) {
+    const connection = await db_1.pool.getConnection();
+    try {
+        const [cotizacionResult] = await connection.query("INSERT INTO cotizaciones (tipo, nombre, cedula, correo, telefono, direccion, departamento_id, municipio_id, total_neto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+            "accesorio",
+            data.nombre,
+            data.cedula,
+            data.correo,
+            data.telefono,
+            data.direccion,
+            data.departamento_id,
+            data.municipio_id,
+            data.total_neto,
+        ]);
+        const cotizacionId = cotizacionResult.insertId;
+        await connection.query("INSERT INTO cotizacion_accesorio (cotizacion_id, accesorio_id, cantidad, precio_unitario, total) VALUES (?, ?, ?, ?, ?)", [
+            cotizacionId,
+            data.accesorio_id,
+            data.cantidad,
+            data.precio_base,
+            data.total_neto,
+        ]);
+        return cotizacionId;
+    }
+    finally {
+        connection.release();
+    }
 }
 //# sourceMappingURL=cotizacionModel.js.map

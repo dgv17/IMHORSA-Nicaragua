@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accesorios | IMHORSA</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+  </head>
+  <body>
+    <header id="main-header">
+      <div class="container">
+        <div id="brand">
+          <a href="/"
+            ><img src="/images/logo-cropped.png" alt="IMHORSA logo" id="logo"
+          /></a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li class="desplegable">
+              <button class="menu-toggle">Vehiculos ▾</button>
+              <ul class="submenu">
+                <li><a href="/HTML/Vehiculos.html">Todos los Vehiculos</a></li>
+                <li>
+                  <a href="/HTML/CompraMayor.html">Cotizacion para Eventos</a>
+                </li>
+              </ul>
+            </li>
+            <li class="desplegable">
+              <button class="menu-toggle current">Servicios ▾</button>
+              <ul class="submenu">
+                <li>
+                  <a href="/HTML/Talleres.html">Talleres y Mantenimiento</a>
+                </li>
+                <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+                <li><a href="/HTML/Accesorios.html" class="active-link">Accesorios</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <section id="accesorios-hero">
+      <div class="hero-overlay">
+        <div class="container">
+          <h1>ACCESORIOS</h1>
+          <p>Personalice su carrito de golf con nuestra gama completa de accesorios.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="lista-accesorios">
+      <div class="container column-layout">
+        <div class="serie-header">
+          <h2>Accesorios Serie D5</h2>
+          <hr class="serie-divider" />
+        </div>
+        <div id="grid-d5" class="vehiculos-grid"></div>
+
+        <div class="serie-header" style="margin-top: 60px;">
+          <h2>Accesorios Serie D2</h2>
+          <hr class="serie-divider" />
+        </div>
+        <div id="grid-d2" class="vehiculos-grid"></div>
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <div class="container">
+        <h2>¡CONSEGUÍ EL ACCESORIO PERFECTO!</h2>
+        <a href="formcotizacionvehiculo.html" class="btn-white">COTIZAR</a>
+      </div>
+    </section>
+
+    <footer>
+      <section class="footer">
+        <div class="sec-1">
+          <img src="/images/logo.jpg" alt="IMHORSA logo" />
+          <p>Importadora Horvilleur Sociedad Anónima</p>
+          <div class="footer-icon">
+            <a href=""><i class="bx bxl-whatsapp"></i></a>
+          </div>
+        </div>
+        <div class="sec-2">
+          <h4>Accesos directos</h4>
+          <li><a href="/HTML/Vehiculos.html">Vehículos</a></li>
+          <li><a href="/HTML/Accesorios.html">Accesorios</a></li>
+          <li><a href="/HTML/Talleres.html">Mantenimiento</a></li>
+        </div>
+        <div class="sec-3">
+          <h4>Compañía</h4>
+          <li><a href="/HTML/CompraMayor.html">Cotización para Eventos</a></li>
+          <li><a href="/HTML/Repuestos.html">Repuestos</a></li>
+        </div>
+        <div class="sec-4">
+          <h4>Contáctanos</h4>
+          <li><a href="mailto:imhorsa@gmail.com">imhorsa@gmail.com</a></li>
+          <li><a href="tel:+50587673747">+505 87673747</a></li>
+        </div>
+      </section>
+    </footer>
+
+    <script src="/js/script.js"></script>
+  </body>
+</html>

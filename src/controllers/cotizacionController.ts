@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { pool } from "../models/db";
-import { crearCotizacionVehiculo } from "../models/cotizacionModel";
+import {
+  crearCotizacionVehiculo,
+  crearCotizacionAccesorio,
+} from "../models/cotizacionModel";
 import nodemailer from "nodemailer";
 import { validarTelefono, validarCedula } from "../utils/validaciones";
 import axios from "axios";
@@ -12,16 +15,12 @@ export async function postCotizacionVehiculo(req: Request, res: Response) {
     if (!captchaResponse) {
       return res.status(400).json({ error: "Captcha no completado" });
     }
-
     const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.CAPTCHA_SECRET}&response=${captchaResponse}`;
     const { data } = await axios.post(verifyURL);
-
     if (!data.success) {
       return res.status(400).json({ error: "Captcha inválido" });
     }
     const { telefono, cedula, correo, direccion } = req.body;
-
-    // Validaciones
     const errorTel = validarTelefono(telefono);
     if (errorTel) return res.status(400).json({ error: errorTel });
     const errorCed = validarCedula(cedula);
@@ -30,11 +29,8 @@ export async function postCotizacionVehiculo(req: Request, res: Response) {
       return res.status(400).json({ error: "Correo demasiado largo" });
     if (direccion.length > 100)
       return res.status(400).json({ error: "Dirección demasiado larga" });
-
     await connection.beginTransaction();
     const id = await crearCotizacionVehiculo(req.body);
-
-    // Generar número de factura con prefijo IMH
     const numeroFactura = `IMH-${String(id).padStart(6, "0")}`;
     await connection.query(
       "UPDATE cotizaciones SET numero_factura = ? WHERE id = ?",
@@ -49,15 +45,14 @@ export async function postCotizacionVehiculo(req: Request, res: Response) {
       "SELECT nombre FROM municipios WHERE id = ?",
       [req.body.municipio_id]
     );
-    const [[modelo]]: any = await connection.query(` 
+    const [[modelo]]: any = await connection.query(
+      ` 
         SELECT mo.nombre AS modelo, s.nombre AS serie
         FROM modelos mo
         JOIN series s ON mo.serie_id = s.id
         WHERE mo.id = ?`,
       [req.body.modelo_id]
     );
-
-    // Configurar transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -65,8 +60,6 @@ export async function postCotizacionVehiculo(req: Request, res: Response) {
         pass: process.env.EMAIL_PASS,
       },
     });
-
-    // Comprobante HTML con número de factura
     const mensajeHTML = `
     <div style="font-family: Arial, sans-serif; color: #333;">
         <h2 style="color:#2c3e50;">Su cotización fue registrada correctamente!</h2>

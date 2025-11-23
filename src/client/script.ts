@@ -141,6 +141,53 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchVehiculos(serie || undefined);
   });
 });
+
+interface Accesorio {
+  id: number;
+  nombre: string;
+  precio: number;
+  descripcion: string;
+  serie: string;
+}
+function normalizeAccesorioFileName(nombre: string): string {
+  return (
+    nombre
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "+")
+      .replace(/[^\w+]/g, "") + ".png"
+  );
+}
+async function fetchAccesorios(serie: string, containerId: string) {
+  const res = await fetch(`/api/accesorios?serie=${encodeURIComponent(serie)}`);
+  const accesorios: Accesorio[] = await res.json();
+  console.log(`Accesorios para ${serie}:`, accesorios);
+  const grid = document.getElementById(containerId);
+  if (!grid) return;
+  grid.innerHTML = accesorios
+    .map((a) => {
+      const imgFile = normalizeAccesorioFileName(a.nombre);
+      const imgPath = `/images/accesorios/${imgFile}`;
+      return `
+      <a href="/HTML/formaccesorios.html" class="vehiculo-card card-link">
+        <img src="${imgPath}" alt="${
+        a.nombre
+      }" onerror="this.src='/images/placeholder.png'" />
+        <h3>${a.nombre}</h3>
+        <p>${a.descripcion}</p>
+        <p><strong>Precio:</strong> C$${a.precio.toFixed(2)}</p>
+        <span class="vehiculo-btn">Cotizar</span>
+      </a>
+    `;
+    })
+    .join("");
+}
+document.addEventListener("DOMContentLoaded", () => {
+  fetchAccesorios("D5", "grid-d5");
+  fetchAccesorios("D2", "grid-d2");
+});
+
 //form frontend
 
 interface Departamento {
@@ -227,7 +274,6 @@ function validarNombreFront(nombre: string): string | null {
   if (trimmed.length > 50) {
     return "El nombre completo no puede superar 50 caracteres";
   }
-  // Evitar solo letras repetidas (ej: AAAAAA...)
   const repetidoLetras = /^([A-Za-zÁÉÍÓÚÑ])\1{4,}$/; // 5+ veces la misma letra
   if (repetidoLetras.test(trimmed)) {
     return "El nombre no puede ser solo letras repetidas";
