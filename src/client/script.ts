@@ -611,3 +611,115 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// --- Admin ---
+function initLogin(): void {
+  const loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
+  if (!loginForm) return;
+  loginForm.addEventListener("submit", async (e: Event) => {
+    e.preventDefault();
+    const username = (document.getElementById("username") as HTMLInputElement).value.trim();
+    const password = (document.getElementById("password") as HTMLInputElement).value.trim();
+    if (!username || !password) {
+      mostrarNotif("Debe ingresar usuario y contraseña", "error");
+      return;
+    }
+    mostrarNotif("Verificando credenciales...", "loading");
+    try {
+      const res = await fetch("/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      setTimeout(async () => {
+        if (res.ok) {
+          mostrarNotif("¡Bienvenido!", "success");
+          setTimeout(() => {
+            window.location.href = "/admin/admondashb0ard";
+          }, 2000);
+        } else {
+          const text = await res.text();
+          mostrarNotif(text || "Usuario o contraseña incorrectos", "error");
+        }
+      }, 3200);
+    } catch (err) {
+      console.error(err);
+      mostrarNotif("Error de conexión con el servidor", "error");
+    }
+  });
+}
+function initCorreoRestore(): void {
+  const correoForm = document.getElementById("correoForm") as HTMLFormElement | null;
+  if (!correoForm) return;
+  correoForm.addEventListener("submit", async (e: Event) => {
+    e.preventDefault();
+    const correo = (document.getElementById("correores") as HTMLInputElement).value.trim();
+    if (!correo) {
+      mostrarNotif("Ingrese un correo válido", "error");
+      return;
+    }
+    mostrarNotif("Enviando correo...", "loading");
+    try {
+      const res = await fetch("/admin/restore-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correores: correo }),
+      });
+      setTimeout(async () => {
+        if (res.ok) {
+          mostrarNotif("Correo enviado, revise su bandeja", "success");
+        } else {
+          const text = await res.text();
+          mostrarNotif(text || "Error al enviar correo", "error");
+        }
+      }, 3200);
+    } catch (err) {
+      console.error(err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+function initRestorePass(): void {
+  const restoreForm = document.getElementById("restoreForm") as HTMLFormElement | null;
+  if (!restoreForm) return;
+
+  restoreForm.addEventListener("submit", async (e: Event) => {
+    e.preventDefault();
+    const pw = (document.getElementById("newPassword") as HTMLInputElement).value.trim();
+    const pw2 = (document.getElementById("confirmPassword") as HTMLInputElement).value.trim();
+    if (!pw || pw !== pw2) {
+      mostrarNotif("Las contraseñas no coinciden", "error");
+      return;
+    }
+    mostrarNotif("Procesando...", "loading");
+    const parts = window.location.pathname.split("/");
+    const token = parts[parts.length - 1];
+    try {
+      const res = await fetch(`/admin/restore/${token}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword: pw }),
+      });
+      setTimeout(async () => {
+        if (res.ok) {
+          mostrarNotif("¡Contraseña restablecida con éxito!", "success");
+          setTimeout(() => {
+            window.location.href = "/admin/adlog1n";
+          }, 2000);
+        } else {
+          const text = await res.text();
+          mostrarNotif(text || "Error al restablecer", "error");
+        }
+      }, 3200);
+    } catch (err) {
+      console.error(err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initLogin();
+  initCorreoRestore();
+  initRestorePass();
+});
