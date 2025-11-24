@@ -10,21 +10,28 @@ exports.restoreForm = restoreForm;
 exports.restorePassword = restorePassword;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const lucifer_1 = require("../utils/lucifer");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const path_1 = __importDefault(require("path"));
 async function login(req, res) {
     const { username, password } = req.body;
     try {
-        const [rows] = await db_1.pool.query("SELECT id, username, CAST(AES_DECRYPT(password_user, ?) AS CHAR) AS password, rol_id FROM usuarios WHERE username = ?", [process.env.AES_KEY, username]);
+        const [rows] = await db_1.pool.query("SELECT id, username, password_user, rol_id FROM usuarios WHERE username = ?", [username]);
         if (rows.length === 0) {
             return res.status(401).send("Usuario no encontrado");
         }
         const user = rows[0];
-        if (user.password !== password) {
+        const bcryptHash = (0, lucifer_1.decryptLuciferBlocks)(user.password_user, process.env.LUCIFER_KEY);
+        const match = await bcrypt_1.default.compare(password, bcryptHash);
+        if (!match) {
             return res.status(401).send("Contraseña incorrecta");
         }
-        // Guardar sesión
-        req.session.user = { id: user.id, username: user.username, rol: user.rol_id };
+        req.session.user = {
+            id: user.id,
+            username: user.username,
+            rol: user.rol_id,
+        };
         return res.redirect("/admin/admondashb0ard");
     }
     catch (error) {
@@ -95,7 +102,12 @@ async function restorePassword(req, res) {
             return res.status(403).send("Link inválido o expirado");
         }
         const userId = rows[0].user_id;
-        await db_1.pool.query("UPDATE usuarios SET password_user = AES_ENCRYPT(?, ?) WHERE id = ?", [newPassword, process.env.AES_KEY, userId]);
+        const bcryptHash = await bcrypt_1.default.hash(newPassword, 12);
+        const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
+        await db_1.pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+            luciferCipher,
+            userId,
+        ]);
         await db_1.pool.query("DELETE FROM restore_tokens WHERE token = ?", [token]);
         return res.redirect("/admin/adlog1n");
     }

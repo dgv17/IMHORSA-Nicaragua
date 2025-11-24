@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { pool } from "../models/db";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
+import { encryptLuciferBlocks, decryptLuciferBlocks } from "../utils/lucifer";
 import nodemailer from "nodemailer";
 import path from "path";
 
@@ -8,24 +10,33 @@ export async function login(req: Request, res: Response) {
   const { username, password } = req.body;
   try {
     const [rows]: any = await pool.query(
-      "SELECT id, username, CAST(AES_DECRYPT(password_user, ?) AS CHAR) AS password, rol_id FROM usuarios WHERE username = ?",
-      [process.env.AES_KEY, username]
+      "SELECT id, username, password_user, rol_id FROM usuarios WHERE username = ?",
+      [username]
     );
     if (rows.length === 0) {
       return res.status(401).send("Usuario no encontrado");
     }
     const user = rows[0];
-    if (user.password !== password) {
+    const bcryptHash = decryptLuciferBlocks(
+      user.password_user,
+      process.env.LUCIFER_KEY!
+    );
+    const match = await bcrypt.compare(password, bcryptHash);
+    if (!match) {
       return res.status(401).send("Contraseña incorrecta");
     }
-    // Guardar sesión
-    req.session.user = { id: user.id, username: user.username, rol: user.rol_id };
+    req.session.user = {
+      id: user.id,
+      username: user.username,
+      rol: user.rol_id,
+    };
     return res.redirect("/admin/admondashb0ard");
   } catch (error) {
     console.error("Error en login:", error);
     return res.status(500).send("Error interno del servidor");
   }
 }
+
 export function logout(req: Request, res: Response) {
   req.session.destroy(() => {
     res.redirect("/admin/adlog1n");
@@ -82,7 +93,9 @@ export async function restoreForm(req: Request, res: Response) {
     if (rows.length === 0) {
       return res.status(403).send("Link inválido o expirado");
     }
-    return res.sendFile(path.join(process.cwd(), "public", "admin", "restorepass.html"));
+    return res.sendFile(
+      path.join(process.cwd(), "public", "admin", "restorepass.html")
+    );
   } catch (error) {
     console.error("Error en restoreForm:", error);
     return res.status(500).send("Error interno del servidor");
@@ -100,10 +113,15 @@ export async function restorePassword(req: Request, res: Response) {
       return res.status(403).send("Link inválido o expirado");
     }
     const userId = rows[0].user_id;
-    await pool.query(
-      "UPDATE usuarios SET password_user = AES_ENCRYPT(?, ?) WHERE id = ?",
-      [newPassword, process.env.AES_KEY, userId]
+    const bcryptHash = await bcrypt.hash(newPassword, 12);
+    const luciferCipher = encryptLuciferBlocks(
+      bcryptHash,
+      process.env.LUCIFER_KEY!
     );
+    await pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+      luciferCipher,
+      userId,
+    ]);
     await pool.query("DELETE FROM restore_tokens WHERE token = ?", [token]);
     return res.redirect("/admin/adlog1n");
   } catch (error) {
