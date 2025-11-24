@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña | IMHORSA Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-circle">
+                    <img src="/images/logo-cropped.png" alt="IMHORSA Logo">
+                </div>
+                <h2>Recuperación</h2>
+                <p>Establezca una nueva contraseña para su cuenta</p>
+            </div>
+            <form action="login.html">
+                <div class="input-wrapper">
+                    <label for="username">Usuario</label>
+                    <div class="input-box">
+                        <i class='bx bxs-user'></i>
+                        <input type="text" id="username" name="username" placeholder="Ingrese su usuario" required>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="new_password">Nueva Contraseña</label>
+                    <div class="input-box">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="new_password" name="new_password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="confirm_password">Repetir Nueva Contraseña</label>
+                    <div class="input-box">
+                        <i class='bx bxs-lock-alt'></i>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-login">
+                    GUARDAR CAMBIOS <i class='bx bx-save'></i>
+                </button>
+                <div style="margin-top: 20px;">
+                    <a href="login.html" style="color: #888; text-decoration: none; font-size: 0.9rem;">
+                        <i class='bx bx-arrow-back'></i> Volver al Login
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

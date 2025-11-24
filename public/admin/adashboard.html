@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | IMHORSA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="admin-body">
+
+    <div class="admin-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">
+                    <img src="/images/logo-cropped.png" alt="IMHORSA" style="height: 40px; background: white; border-radius: 4px; padding: 2px;">
+                    <span>ADMIN</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                
+                <div class="nav-group">
+                    <h3>Main</h3>
+                    <ul>
+                        <li><a href="#" class="active"><i class="bx bxs-dashboard"></i> Home</a></li>
+                        <li><a href="#"><i class="bx bxs-user-account"></i> Usuarios</a></li>
+                        <li><a href="#"><i class="bx bxs-group"></i> Clientes</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-group">
+                    <h3>Inventario</h3>
+                    <ul>
+                        <li><a href="#"><i class="bx bxs-car"></i> Vehículos</a></li>
+                        <li><a href="#"><i class="bx bxs-wrench"></i> Accesorios</a></li>
+                        <li><a href="#"><i class="bx bxs-purchase-tag"></i> Modelos</a></li>
+                        <li><a href="#"><i class="bx bxs-layer"></i> Series</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-group">
+                    <h3>Solicitudes</h3>
+                    <ul>
+                        <li><a href="#"><i class="bx bxs-car-garage"></i> Vehículos</a></li>
+                        <li><a href="#"><i class="bx bxs-hard-hat"></i> Mantenimiento</a></li>
+                        <li><a href="#"><i class="bx bxs-plug"></i> Accesorios</a></li>
+                        <li><a href="#"><i class="bx bxs-calendar-event"></i> Eventos</a></li>
+                    </ul>
+                </div>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/login.html" class="logout-btn"><i class="bx bx-log-out"></i> Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="admin-topbar">
+                <button class="toggle-sidebar"><i class="bx bx-menu"></i></button>
+                <div class="breadcrumbs">
+                    <span><i class="bx bx-home-alt"></i> Main</span>
+                    <i class="bx bx-chevron-right"></i>
+                    <span>Home</span>
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <h1 class="page-title">Home</h1>
+
+                <div class="card-dark">
+                    <div class="card-header">
+                        <h2>Accesos Directos</h2>
+                    </div>
+                    
+                    <div class="quick-actions-grid">
+                        <button class="action-btn">
+                            <i class="bx bxs-user-plus"></i> Nuevo Cliente
+                        </button>
+                        <button class="action-btn">
+                            <i class="bx bxs-car-mechanic"></i> Registrar Vehículo
+                        </button>
+                        <button class="action-btn">
+                            <i class="bx bxs-file-plus"></i> Ver Solicitudes
+                        </button>
+                        <button class="action-btn">
+                            <i class="bx bxs-report"></i> Generar Reporte
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
