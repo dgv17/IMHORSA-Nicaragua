@@ -19,5 +19,12 @@ router.get("/admondashb0ard", auth_1.requireAuth, (req, res) => {
 });
 // Logout
 router.get("/logout", adminController_1.logout);
+router.get("/restore-request", (req, res) => {
+    res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "correorestore.html"));
+});
+router.post("/restore-request", adminController_1.restoreRequest);
+// Vista de formulario de nueva contraseña
+router.get("/restore/:token", adminController_1.restoreForm);
+router.post("/restore/:token", adminController_1.restorePassword);
 exports.default = router;
 //# sourceMappingURL=admin.js.map
