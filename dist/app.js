@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const express_session_1 = __importDefault(require("express-session"));
+const csurf_1 = __importDefault(require("csurf"));
 const vehiculos_1 = __importDefault(require("./routes/vehiculos"));
 const catalogo_1 = __importDefault(require("./routes/catalogo"));
 const cotizacion_1 = __importDefault(require("./routes/cotizacion"));
@@ -26,9 +27,17 @@ app.use((0, express_session_1.default)({
     secret: process.env.SESSION_SECRET || "supersecreto",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } //en producción pon true si usa HTTPS
+    cookie: {
+        httpOnly: true,
+        sameSite: "strict", // evita CSRF básico
+        secure: false // en producción pon true si usas HTTPS
+    }
 }));
-// Rutas
+const csrfProtection = (0, csurf_1.default)({ cookie: false });
+app.use(csrfProtection);
+app.get("/csrf-token", (req, res) => {
+    res.json({ csrfToken: req.csrfToken() });
+});
 app.use("/api/vehiculos", vehiculos_1.default);
 app.use("/api/catalogo", catalogo_1.default);
 app.use("/api", cotizacion_1.default);
@@ -38,6 +47,12 @@ app.use("/api/accesorios", accesorios_1.default);
 app.use("/admin", admin_1.default);
 app.get("/", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "index.html"));
+});
+app.use((err, req, res, next) => {
+    if (err.code === "EBADCSRFTOKEN") {
+        return res.status(403).send("Solicitud inválida o expirada (CSRF detectado)");
+    }
+    next(err);
 });
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);

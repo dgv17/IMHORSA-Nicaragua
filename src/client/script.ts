@@ -300,6 +300,11 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarAccesorios();
 });
 // Validaciones en frontend
+async function getCsrfToken(): Promise<string> {
+  const res = await fetch("/csrf-token");
+  const data = await res.json();
+  return data.csrfToken;
+}
 function validarNombreFront(nombre: string): string | null {
   const trimmed = nombre.trim();
   // Longitud mínima y máxima
@@ -391,6 +396,38 @@ function validarProblemaFront(problema: string): string | null {
   }
   return null;
 }
+function initEventoFormDates(): void {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const minDate = `${yyyy}-${mm}-${dd}`;
+  const maxYear = yyyy + 3;
+  const maxDate = `${maxYear}-${mm}-${dd}`;
+
+  const fechaInicio = document.getElementById("fecha_inicio") as HTMLInputElement | null;
+  const fechaFin = document.getElementById("fecha_fin") as HTMLInputElement | null;
+
+  if (fechaInicio && fechaFin) {
+    fechaInicio.min = minDate;
+    fechaFin.min = minDate;
+    fechaInicio.max = maxDate;
+    fechaFin.max = maxDate;
+
+    fechaInicio.addEventListener("change", function () {
+      if (fechaFin) {
+        fechaFin.min = this.value;
+        if (fechaFin.value && fechaFin.value < this.value) {
+          fechaFin.value = this.value;
+        }
+      }
+    });
+  }
+}
+document.addEventListener("DOMContentLoaded", () => {
+  initEventoFormDates();
+});
+
 
 function mostrarNotif(
   mensaje: string,
@@ -445,9 +482,13 @@ document.addEventListener("DOMContentLoaded", () => {
       if (errorDir) return mostrarNotif(errorDir, "error");
       mostrarNotif("Enviando solicitud", "loading");
       try {
+        const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/vehiculo", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json" ,
+            "CSRF-Token": token
+          },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -484,9 +525,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       mostrarNotif("Enviando solicitud", "loading");
       try {
+        const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/evento", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "CSRF-Token": token 
+           },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -529,9 +574,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       mostrarNotif("Enviando solicitud", "loading");
       try {
+        const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/repuestos", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json" ,
+            "CSRF-Token": token 
+          },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -589,9 +638,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       mostrarNotif("Enviando solicitud", "loading");
       try {
+        const token = await getCsrfToken();
         const res = await fetch("/api/accesorios/cotizacion", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+             "Content-Type": "application/json" ,
+             "CSRF-Token": token 
+            },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -626,9 +679,13 @@ function initLogin(): void {
     }
     mostrarNotif("Verificando credenciales...", "loading");
     try {
+      const token = await getCsrfToken();
       const res = await fetch("/admin/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+           "Content-Type": "application/json" ,
+           "CSRF-Token": token 
+          },
         body: JSON.stringify({ username, password }),
       });
       setTimeout(async () => {
@@ -660,9 +717,13 @@ function initCorreoRestore(): void {
     }
     mostrarNotif("Enviando correo...", "loading");
     try {
+      const token = await getCsrfToken();
       const res = await fetch("/admin/restore-request", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+           "Content-Type": "application/json" ,
+           "CSRF-Token": token
+          },
         body: JSON.stringify({ correores: correo }),
       });
       setTimeout(async () => {
@@ -695,9 +756,13 @@ function initRestorePass(): void {
     const parts = window.location.pathname.split("/");
     const token = parts[parts.length - 1];
     try {
+      const tokencsrf = await getCsrfToken();
       const res = await fetch(`/admin/restore/${token}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+           "Content-Type": "application/json" ,
+           "CSRF-Token": tokencsrf
+          },
         body: JSON.stringify({ newPassword: pw }),
       });
       setTimeout(async () => {
@@ -722,4 +787,11 @@ document.addEventListener("DOMContentLoaded", () => {
   initLogin();
   initCorreoRestore();
   initRestorePass();
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = await getCsrfToken();
+  document.querySelectorAll("input[name='_csrf']").forEach((input) => {
+    (input as HTMLInputElement).value = token;
+  });
 });

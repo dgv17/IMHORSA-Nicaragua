@@ -253,6 +253,13 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarAccesorios();
 });
 // Validaciones en frontend
+function getCsrfToken() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const res = yield fetch("/csrf-token");
+        const data = yield res.json();
+        return data.csrfToken;
+    });
+}
 function validarNombreFront(nombre) {
     const trimmed = nombre.trim();
     // Longitud mínima y máxima
@@ -343,6 +350,34 @@ function validarProblemaFront(problema) {
     }
     return null;
 }
+function initEventoFormDates() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+    const minDate = `${yyyy}-${mm}-${dd}`;
+    const maxYear = yyyy + 3;
+    const maxDate = `${maxYear}-${mm}-${dd}`;
+    const fechaInicio = document.getElementById("fecha_inicio");
+    const fechaFin = document.getElementById("fecha_fin");
+    if (fechaInicio && fechaFin) {
+        fechaInicio.min = minDate;
+        fechaFin.min = minDate;
+        fechaInicio.max = maxDate;
+        fechaFin.max = maxDate;
+        fechaInicio.addEventListener("change", function () {
+            if (fechaFin) {
+                fechaFin.min = this.value;
+                if (fechaFin.value && fechaFin.value < this.value) {
+                    fechaFin.value = this.value;
+                }
+            }
+        });
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    initEventoFormDates();
+});
 function mostrarNotif(mensaje, tipo = "loading") {
     const notif = document.createElement("div");
     notif.className = "loader-notification";
@@ -394,9 +429,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return mostrarNotif(errorDir, "error");
             mostrarNotif("Enviando solicitud", "loading");
             try {
+                const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/vehiculo", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token
+                    },
                     body: JSON.stringify(data),
                 });
                 const result = yield res.json();
@@ -433,9 +472,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return mostrarNotif(errorDir, "error");
             mostrarNotif("Enviando solicitud", "loading");
             try {
+                const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/evento", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token
+                    },
                     body: JSON.stringify(data),
                 });
                 const result = yield res.json();
@@ -482,9 +525,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 return mostrarNotif(errorProb, "error");
             mostrarNotif("Enviando solicitud", "loading");
             try {
+                const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/repuestos", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token
+                    },
                     body: JSON.stringify(data),
                 });
                 const result = yield res.json();
@@ -540,9 +587,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             mostrarNotif("Enviando solicitud", "loading");
             try {
+                const token = yield getCsrfToken();
                 const res = yield fetch("/api/accesorios/cotizacion", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token
+                    },
                     body: JSON.stringify(data),
                 });
                 const result = yield res.json();
@@ -576,9 +627,13 @@ function initLogin() {
         }
         mostrarNotif("Verificando credenciales...", "loading");
         try {
+            const token = yield getCsrfToken();
             const res = yield fetch("/admin/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token
+                },
                 body: JSON.stringify({ username, password }),
             });
             setTimeout(() => __awaiter(this, void 0, void 0, function* () {
@@ -613,9 +668,13 @@ function initCorreoRestore() {
         }
         mostrarNotif("Enviando correo...", "loading");
         try {
+            const token = yield getCsrfToken();
             const res = yield fetch("/admin/restore-request", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token
+                },
                 body: JSON.stringify({ correores: correo }),
             });
             setTimeout(() => __awaiter(this, void 0, void 0, function* () {
@@ -650,9 +709,13 @@ function initRestorePass() {
         const parts = window.location.pathname.split("/");
         const token = parts[parts.length - 1];
         try {
+            const tokencsrf = yield getCsrfToken();
             const res = yield fetch(`/admin/restore/${token}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": tokencsrf
+                },
                 body: JSON.stringify({ newPassword: pw }),
             });
             setTimeout(() => __awaiter(this, void 0, void 0, function* () {
@@ -679,3 +742,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initCorreoRestore();
     initRestorePass();
 });
+document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
+    const token = yield getCsrfToken();
+    document.querySelectorAll("input[name='_csrf']").forEach((input) => {
+        input.value = token;
+    });
+}));

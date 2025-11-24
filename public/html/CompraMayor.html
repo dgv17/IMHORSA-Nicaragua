@@ -175,6 +175,7 @@
             </div>
 
             <div class="submit-container">
+              <input type="hidden" name="_csrf" />
               <button type="submit" class="cotizar-btn full-width">
                 <i class="fas fa-calendar-check"></i> Solicitar Cotización
               </button>
@@ -245,31 +246,5 @@
       </section>
     </footer>
     <script src="/js/script.js"></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, "0");
-        const dd = String(today.getDate()).padStart(2, "0");
-        const minDate = `${yyyy}-${mm}-${dd}`;
-        const maxYear = yyyy + 3;
-        const maxDate = `${maxYear}-${mm}-${dd}`;
-        const fechaInicio = document.getElementById("fecha_inicio");
-        const fechaFin = document.getElementById("fecha_fin");
-        if (fechaInicio && fechaFin) {
-          fechaInicio.min = minDate;
-          fechaFin.min = minDate;
-          fechaInicio.max = maxDate;
-          fechaFin.max = maxDate;
-          fechaInicio.addEventListener("change", function () {
-            fechaFin.min = this.value;
-            if (fechaFin.value && fechaFin.value < this.value) {
-              fechaFin.value = this.value;
-            }
-          });
-        }
-      });
-    </script>
   </body>
 </html>
