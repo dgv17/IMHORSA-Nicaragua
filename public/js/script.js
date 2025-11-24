@@ -434,7 +434,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "CSRF-Token": token
+                        "CSRF-Token": token,
                     },
                     body: JSON.stringify(data),
                 });
@@ -477,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "CSRF-Token": token
+                        "CSRF-Token": token,
                     },
                     body: JSON.stringify(data),
                 });
@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "CSRF-Token": token
+                        "CSRF-Token": token,
                     },
                     body: JSON.stringify(data),
                 });
@@ -592,7 +592,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        "CSRF-Token": token
+                        "CSRF-Token": token,
                     },
                     body: JSON.stringify(data),
                 });
@@ -632,7 +632,7 @@ function initLogin() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "CSRF-Token": token
+                    "CSRF-Token": token,
                 },
                 body: JSON.stringify({ username, password }),
             });
@@ -673,7 +673,7 @@ function initCorreoRestore() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "CSRF-Token": token
+                    "CSRF-Token": token,
                 },
                 body: JSON.stringify({ correores: correo }),
             });
@@ -714,7 +714,7 @@ function initRestorePass() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "CSRF-Token": tokencsrf
+                    "CSRF-Token": tokencsrf,
                 },
                 body: JSON.stringify({ newPassword: pw }),
             });
@@ -737,11 +737,47 @@ function initRestorePass() {
         }
     }));
 }
+function getCurrentUserRole() {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        try {
+            const res = yield fetch("/admin/me", { credentials: "same-origin" });
+            if (!res.ok)
+                return null;
+            const data = yield res.json();
+            if (!data.authenticated)
+                return null;
+            return (_a = data.rol) !== null && _a !== void 0 ? _a : null;
+        }
+        catch (_b) {
+            return null;
+        }
+    });
+}
+function hideUsuariosIfNotAdmin(rol) {
+    if (rol !== 1) {
+        const usuariosLink = document.querySelector('[data-nav="usuarios"]');
+        if (usuariosLink) {
+            const li = usuariosLink.closest("li");
+            if (li)
+                li.remove();
+        }
+    }
+}
 document.addEventListener("DOMContentLoaded", () => {
     initLogin();
     initCorreoRestore();
     initRestorePass();
 });
+document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
+    const path = window.location.pathname.replace(/\/$/, "");
+    if (path.includes("admondashb0ard")) {
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            const rol = yield getCurrentUserRole();
+            hideUsuariosIfNotAdmin(rol);
+        }), 100);
+    }
+}));
 document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
     const token = yield getCsrfToken();
     document.querySelectorAll("input[name='_csrf']").forEach((input) => {

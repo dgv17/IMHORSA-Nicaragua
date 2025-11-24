@@ -36,6 +36,7 @@ app.use(csrfProtection);
 app.get("/csrf-token", (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
+
 app.use("/api/vehiculos", vehiculosRoutes);
 app.use("/api/catalogo", catalogoRoutes);
 app.use("/api", cotizacionRoutes);
@@ -53,6 +54,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   }
   next(err);
 });
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

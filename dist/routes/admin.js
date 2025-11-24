@@ -13,18 +13,33 @@ router.get("/adlog1n", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "logadm.html"));
 });
 router.post("/login", adminController_1.login);
-// Dashboard protegido
+// Dashboard protegido (todos los roles autenticados)
 router.get("/admondashb0ard", auth_1.requireAuth, (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "adashboard.html"));
 });
+// Ejemplo: sección Usuarios (solo admin)
+router.get("/usuarios", auth_1.requireAdmin, (req, res) => {
+    res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "usuarios.html"));
+});
 // Logout
 router.get("/logout", adminController_1.logout);
+// Restore
 router.get("/restore-request", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "correorestore.html"));
 });
 router.post("/restore-request", adminController_1.restoreRequest);
-// Vista de formulario de nueva contraseña
 router.get("/restore/:token", adminController_1.restoreForm);
 router.post("/restore/:token", adminController_1.restorePassword);
+// Endpoint para rol actual
+router.get("/me", auth_1.requireAuth, (req, res) => {
+    const user = req.session.user;
+    if (!user)
+        return res.status(401).json({ authenticated: false });
+    res.json({
+        authenticated: true,
+        username: user.username,
+        rol: user.rol,
+    });
+});
 exports.default = router;
 //# sourceMappingURL=admin.js.map

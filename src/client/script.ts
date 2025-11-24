@@ -405,8 +405,12 @@ function initEventoFormDates(): void {
   const maxYear = yyyy + 3;
   const maxDate = `${maxYear}-${mm}-${dd}`;
 
-  const fechaInicio = document.getElementById("fecha_inicio") as HTMLInputElement | null;
-  const fechaFin = document.getElementById("fecha_fin") as HTMLInputElement | null;
+  const fechaInicio = document.getElementById(
+    "fecha_inicio"
+  ) as HTMLInputElement | null;
+  const fechaFin = document.getElementById(
+    "fecha_fin"
+  ) as HTMLInputElement | null;
 
   if (fechaInicio && fechaFin) {
     fechaInicio.min = minDate;
@@ -427,7 +431,6 @@ function initEventoFormDates(): void {
 document.addEventListener("DOMContentLoaded", () => {
   initEventoFormDates();
 });
-
 
 function mostrarNotif(
   mensaje: string,
@@ -485,9 +488,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/vehiculo", {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json" ,
-            "CSRF-Token": token
+          headers: {
+            "Content-Type": "application/json",
+            "CSRF-Token": token,
           },
           body: JSON.stringify(data),
         });
@@ -528,10 +531,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/evento", {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            "CSRF-Token": token 
-           },
+            "CSRF-Token": token,
+          },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -577,9 +580,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const token = await getCsrfToken();
         const res = await fetch("/api/cotizacion/repuestos", {
           method: "POST",
-          headers: { 
-            "Content-Type": "application/json" ,
-            "CSRF-Token": token 
+          headers: {
+            "Content-Type": "application/json",
+            "CSRF-Token": token,
           },
           body: JSON.stringify(data),
         });
@@ -642,9 +645,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const res = await fetch("/api/accesorios/cotizacion", {
           method: "POST",
           headers: {
-             "Content-Type": "application/json" ,
-             "CSRF-Token": token 
-            },
+            "Content-Type": "application/json",
+            "CSRF-Token": token,
+          },
           body: JSON.stringify(data),
         });
         const result = await res.json();
@@ -667,12 +670,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // --- Admin ---
 function initLogin(): void {
-  const loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
+  const loginForm = document.getElementById(
+    "loginForm"
+  ) as HTMLFormElement | null;
   if (!loginForm) return;
   loginForm.addEventListener("submit", async (e: Event) => {
     e.preventDefault();
-    const username = (document.getElementById("username") as HTMLInputElement).value.trim();
-    const password = (document.getElementById("password") as HTMLInputElement).value.trim();
+    const username = (
+      document.getElementById("username") as HTMLInputElement
+    ).value.trim();
+    const password = (
+      document.getElementById("password") as HTMLInputElement
+    ).value.trim();
     if (!username || !password) {
       mostrarNotif("Debe ingresar usuario y contraseña", "error");
       return;
@@ -683,9 +692,9 @@ function initLogin(): void {
       const res = await fetch("/admin/login", {
         method: "POST",
         headers: {
-           "Content-Type": "application/json" ,
-           "CSRF-Token": token 
-          },
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
         body: JSON.stringify({ username, password }),
       });
       setTimeout(async () => {
@@ -706,11 +715,15 @@ function initLogin(): void {
   });
 }
 function initCorreoRestore(): void {
-  const correoForm = document.getElementById("correoForm") as HTMLFormElement | null;
+  const correoForm = document.getElementById(
+    "correoForm"
+  ) as HTMLFormElement | null;
   if (!correoForm) return;
   correoForm.addEventListener("submit", async (e: Event) => {
     e.preventDefault();
-    const correo = (document.getElementById("correores") as HTMLInputElement).value.trim();
+    const correo = (
+      document.getElementById("correores") as HTMLInputElement
+    ).value.trim();
     if (!correo) {
       mostrarNotif("Ingrese un correo válido", "error");
       return;
@@ -721,9 +734,9 @@ function initCorreoRestore(): void {
       const res = await fetch("/admin/restore-request", {
         method: "POST",
         headers: {
-           "Content-Type": "application/json" ,
-           "CSRF-Token": token
-          },
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
         body: JSON.stringify({ correores: correo }),
       });
       setTimeout(async () => {
@@ -741,13 +754,19 @@ function initCorreoRestore(): void {
   });
 }
 function initRestorePass(): void {
-  const restoreForm = document.getElementById("restoreForm") as HTMLFormElement | null;
+  const restoreForm = document.getElementById(
+    "restoreForm"
+  ) as HTMLFormElement | null;
   if (!restoreForm) return;
 
   restoreForm.addEventListener("submit", async (e: Event) => {
     e.preventDefault();
-    const pw = (document.getElementById("newPassword") as HTMLInputElement).value.trim();
-    const pw2 = (document.getElementById("confirmPassword") as HTMLInputElement).value.trim();
+    const pw = (
+      document.getElementById("newPassword") as HTMLInputElement
+    ).value.trim();
+    const pw2 = (
+      document.getElementById("confirmPassword") as HTMLInputElement
+    ).value.trim();
     if (!pw || pw !== pw2) {
       mostrarNotif("Las contraseñas no coinciden", "error");
       return;
@@ -760,9 +779,9 @@ function initRestorePass(): void {
       const res = await fetch(`/admin/restore/${token}`, {
         method: "POST",
         headers: {
-           "Content-Type": "application/json" ,
-           "CSRF-Token": tokencsrf
-          },
+          "Content-Type": "application/json",
+          "CSRF-Token": tokencsrf,
+        },
         body: JSON.stringify({ newPassword: pw }),
       });
       setTimeout(async () => {
@@ -782,13 +801,40 @@ function initRestorePass(): void {
     }
   });
 }
-
+async function getCurrentUserRole(): Promise<number | null> {
+  try {
+    const res = await fetch("/admin/me", { credentials: "same-origin" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!data.authenticated) return null;
+    return data.rol ?? null;
+  } catch {
+    return null;
+  }
+}
+function hideUsuariosIfNotAdmin(rol: number | null): void {
+  if (rol !== 1) {
+    const usuariosLink = document.querySelector('[data-nav="usuarios"]');
+    if (usuariosLink) {
+      const li = usuariosLink.closest("li");
+      if (li) li.remove();
+    }
+  }
+}
 document.addEventListener("DOMContentLoaded", () => {
   initLogin();
   initCorreoRestore();
   initRestorePass();
 });
-
+document.addEventListener("DOMContentLoaded", async () => {
+  const path = window.location.pathname.replace(/\/$/, "");
+  if (path.includes("admondashb0ard")) {
+    setTimeout(async () => {
+      const rol = await getCurrentUserRole();
+      hideUsuariosIfNotAdmin(rol);
+    }, 100);
+  }
+});
 document.addEventListener("DOMContentLoaded", async () => {
   const token = await getCsrfToken();
   document.querySelectorAll("input[name='_csrf']").forEach((input) => {

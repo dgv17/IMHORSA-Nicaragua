@@ -6,3 +6,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   }
   return res.redirect("/admin/adlog1n");
 }
+export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+  if (req.session?.user?.rol === 1) {
+    return next();
+  }
+  return res.status(403).send("Acceso denegado: solo administradores");
+}
