@@ -821,6 +821,104 @@ function hideUsuariosIfNotAdmin(rol: number | null): void {
     }
   }
 }
+function setActiveNav(key: string): void {
+  document.querySelectorAll(".sidebar-nav a").forEach((a) => {
+    a.classList.remove("active");
+  });
+  const active = document.querySelector(`[data-nav="${key}"]`);
+  active?.classList.add("active");
+}
+const navGroups: Record<string, string> = {
+  home: "Main",
+  usuarios: "Main",
+  clientes: "Main",
+  vehiculos: "Inventario",
+  accesorios: "Inventario",
+  modelos: "Inventario",
+  series: "Inventario",
+  "sol-vehiculos": "Solicitudes",
+  mantenimiento: "Solicitudes",
+  "sol-accesorios": "Solicitudes",
+  eventos: "Solicitudes",
+};
+function updateHeader(key: string): void {
+  const pageTitle = document.getElementById("page-title");
+  const breadcrumb = document.getElementById("breadcrumb");
+  const groupLabel = navGroups[key] || "Main";
+  const sectionLabel =
+    key.replace("sol-", "").charAt(0).toUpperCase() +
+    key.replace("sol-", "").slice(1);
+
+  if (pageTitle) pageTitle.textContent = sectionLabel;
+  if (breadcrumb) {
+    breadcrumb.innerHTML = `${groupLabel} <i class="bx bx-chevron-right"></i> ${sectionLabel}`;
+  }
+}
+function initSidebarToggle(): void {
+  const toggleBtn = document.querySelector(".toggle-sidebar") as HTMLElement;
+  const sidebar = document.querySelector(".sidebar") as HTMLElement;
+  const container = document.querySelector(".admin-container") as HTMLElement;
+
+  if (!toggleBtn || !sidebar || !container) return;
+
+  const isMobile = () => window.matchMedia("(max-width: 768px)").matches;
+  const applyState = (hidden: boolean) => {
+    if (isMobile()) {
+      if (hidden) {
+        sidebar.classList.remove("active");
+        toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+      } else {
+        sidebar.classList.add("active");
+        toggleBtn.innerHTML = '<i class="bx bx-x"></i>';
+      }
+    } else {
+      if (hidden) {
+        container.classList.add("sidebar-collapsed");
+        toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+      } else {
+        container.classList.remove("sidebar-collapsed");
+        toggleBtn.innerHTML = '<i class="bx bx-menu-alt-left"></i>';
+      }
+    }
+  };
+  let isHidden = isMobile(); 
+  applyState(isHidden);
+  toggleBtn.addEventListener("click", () => {
+    isHidden = !isHidden;
+    applyState(isHidden);
+  });
+  window.addEventListener("resize", () => {
+    const mobileNow = isMobile();
+    if (mobileNow) {
+        isHidden = true;
+    } else {
+        isHidden = false;
+    }
+    applyState(isHidden);
+  });
+}
+
+function showSection(key: string): void {
+  document.querySelectorAll(".content-section").forEach((section) => {
+    section.classList.add("hidden");
+  });
+  const target = document.getElementById(`section-${key}`);
+  if (target) target.classList.remove("hidden");
+  setActiveNav(key);
+  updateHeader(key);
+}
+function initPanelNavigation(): void {
+  document.querySelectorAll(".sidebar-nav a").forEach((a) => {
+    const key = a.getAttribute("data-nav");
+    if (!key) return;
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      showSection(key);
+    });
+  });
+  showSection("home");
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initLogin();
   initCorreoRestore();
@@ -829,12 +927,13 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", async () => {
   const path = window.location.pathname.replace(/\/$/, "");
   if (path.includes("admondashb0ard")) {
-    setTimeout(async () => {
-      const rol = await getCurrentUserRole();
-      hideUsuariosIfNotAdmin(rol);
-    }, 100);
+    const rol = await getCurrentUserRole();
+    hideUsuariosIfNotAdmin(rol);
+    initPanelNavigation();
+    initSidebarToggle();
   }
 });
+
 document.addEventListener("DOMContentLoaded", async () => {
   const token = await getCsrfToken();
   document.querySelectorAll("input[name='_csrf']").forEach((input) => {

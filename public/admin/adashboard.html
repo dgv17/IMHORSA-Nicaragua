@@ -1,100 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard Admin | IMHORSA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@latest/css/boxicons.min.css">
-    <link rel="stylesheet" href="/css/style.css">
-</head>
-<body class="admin-body">
-
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@latest/css/boxicons.min.css"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body class="admin-body">
     <div class="admin-container">
+      
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="admin-logo">
+            <img
+              src="/images/logo-cropped.png"
+              alt="IMHORSA"
+              style="height: 40px; background: white; border-radius: 4px; padding: 2px;"
+            />
+            <span>ADMIN</span>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="nav-group">
+            <h3>Main</h3>
+            <ul>
+              <li><a href="#" data-nav="home"><i class="bx bxs-dashboard"></i> Home</a></li>
+              <li><a href="#" data-nav="usuarios"><i class="bx bxs-user-account"></i> Usuarios</a></li>
+              <li><a href="#" data-nav="clientes"><i class="bx bxs-group"></i> Clientes</a></li>
+            </ul>
+          </div>
+
+          <div class="nav-group">
+            <h3>Inventario</h3>
+            <ul>
+              <li><a href="#" data-nav="vehiculos"><i class="bx bxs-car"></i> Vehículos</a></li>
+              <li><a href="#" data-nav="accesorios"><i class="bx bxs-wrench"></i> Accesorios</a></li>
+              <li><a href="#" data-nav="modelos"><i class="bx bxs-purchase-tag"></i> Modelos</a></li>
+              <li><a href="#" data-nav="series"><i class="bx bxs-layer"></i> Series</a></li>
+            </ul>
+          </div>
+
+          <div class="nav-group">
+            <h3>Solicitudes</h3>
+            <ul>
+              <li><a href="#" data-nav="sol-vehiculos"><i class="bx bxs-car-garage"></i> Vehículos</a></li>
+              <li><a href="#" data-nav="mantenimiento"><i class="bx bxs-hard-hat"></i> Mantenimiento</a></li>
+              <li><a href="#" data-nav="sol-accesorios"><i class="bx bxs-plug"></i> Accesorios</a></li>
+              <li><a href="#" data-nav="eventos"><i class="bx bxs-calendar-event"></i> Eventos</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="/admin/adlog1n" class="logout-btn"><i class="bx bx-log-out"></i> Logout</a>
+        </div>
+      </aside>
+
+      <main class="main-content">
         
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="admin-logo">
-                    <img src="/images/logo-cropped.png" alt="IMHORSA" style="height: 40px; background: white; border-radius: 4px; padding: 2px;">
-                    <span>ADMIN</span>
-                </div>
+        <header class="admin-topbar">
+          <button class="toggle-sidebar"><i class="bx bx-menu"></i></button>
+          <div class="breadcrumbs" id="breadcrumb">
+            Main <i class="bx bx-chevron-right"></i> Home
+          </div>
+        </header>
+
+        <div class="content-wrapper">
+          
+          <h1 class="page-title" id="page-title" style="margin-top: 0; margin-bottom: 20px;">Home</h1>
+
+          <div id="section-home" class="content-section">
+            <div class="card-dark">
+              <div class="card-header"><h2>Accesos Directos</h2></div>
+              <div class="quick-actions-grid">
+                <button class="action-btn"><i class="bx bxs-user-plus"></i> Nuevo Cliente</button>
+                <button class="action-btn"><i class="bx bxs-car-mechanic"></i> Registrar Vehículo</button>
+                <button class="action-btn"><i class="bx bxs-file-plus"></i> Ver Solicitudes</button>
+              </div>
             </div>
+          </div>
 
-            <nav class="sidebar-nav">
-                
-                <div class="nav-group">
-                    <h3>Main</h3>
-                    <ul>
-                        <li><a href="#" class="active"><i class="bx bxs-dashboard"></i> Home</a></li>
-                        <li><a href="#" data-nav="usuarios"><i class="bx bxs-user-account"></i> Usuarios</a></li>
-                        <li><a href="#"><i class="bx bxs-group"></i> Clientes</a></li>
-                    </ul>
-                </div>
-
-                <div class="nav-group">
-                    <h3>Inventario</h3>
-                    <ul>
-                        <li><a href="#"><i class="bx bxs-car"></i> Vehículos</a></li>
-                        <li><a href="#"><i class="bx bxs-wrench"></i> Accesorios</a></li>
-                        <li><a href="#"><i class="bx bxs-purchase-tag"></i> Modelos</a></li>
-                        <li><a href="#"><i class="bx bxs-layer"></i> Series</a></li>
-                    </ul>
-                </div>
-
-                <div class="nav-group">
-                    <h3>Solicitudes</h3>
-                    <ul>
-                        <li><a href="#"><i class="bx bxs-car-garage"></i> Vehículos</a></li>
-                        <li><a href="#"><i class="bx bxs-hard-hat"></i> Mantenimiento</a></li>
-                        <li><a href="#"><i class="bx bxs-plug"></i> Accesorios</a></li>
-                        <li><a href="#"><i class="bx bxs-calendar-event"></i> Eventos</a></li>
-                    </ul>
-                </div>
-
-            </nav>
-
-            <div class="sidebar-footer">
-                <a href="/admin/adlog1n" class="logout-btn"><i class="bx bx-log-out"></i> Logout</a>
+          <div id="section-usuarios" class="content-section hidden">
+            <div class="card-dark"> <h2>Gestión de Usuarios</h2>
+                <p>Contenido de usuarios aquí...</p>
             </div>
-        </aside>
+          </div>
 
-        <main class="main-content">
-            <header class="admin-topbar">
-                <button class="toggle-sidebar"><i class="bx bx-menu"></i></button>
-                <div class="breadcrumbs">
-                    <span><i class="bx bx-home-alt"></i> Main</span>
-                    <i class="bx bx-chevron-right"></i>
-                    <span>Home</span>
-                </div>
-            </header>
+          <div id="section-clientes" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Gestión de Clientes</h2>
+                <p>Contenido de clientes aquí...</p>
+             </div>
+          </div>
 
-            <div class="content-wrapper">
-                <h1 class="page-title">Home</h1>
+          <div id="section-vehiculos" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Inventario de Vehículos</h2>
+                <p>Listado, registro y edición de vehículos.</p>
+             </div>
+          </div>
 
-                <div class="card-dark">
-                    <div class="card-header">
-                        <h2>Accesos Directos</h2>
-                    </div>
-                    
-                    <div class="quick-actions-grid">
-                        <button class="action-btn">
-                            <i class="bx bxs-user-plus"></i> Nuevo Cliente
-                        </button>
-                        <button class="action-btn">
-                            <i class="bx bxs-car-mechanic"></i> Registrar Vehículo
-                        </button>
-                        <button class="action-btn">
-                            <i class="bx bxs-file-plus"></i> Ver Solicitudes
-                        </button>
-                        <button class="action-btn">
-                            <i class="bx bxs-report"></i> Generar Reporte
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </main>
+          <div id="section-accesorios" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Inventario de Accesorios</h2>
+                <p>Gestión de accesorios disponibles.</p>
+             </div>
+          </div>
+
+          <div id="section-modelos" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Modelos de Vehículos</h2>
+             </div>
+          </div>
+
+          <div id="section-series" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Series de Producción</h2>
+             </div>
+          </div>
+
+          <div id="section-sol-vehiculos" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Solicitudes de Vehículos</h2>
+             </div>
+          </div>
+
+          <div id="section-mantenimiento" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Solicitudes de Mantenimiento</h2>
+             </div>
+          </div>
+
+          <div id="section-sol-accesorios" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Solicitudes de Accesorios</h2>
+             </div>
+          </div>
+
+          <div id="section-eventos" class="content-section hidden">
+             <div class="card-dark">
+                <h2>Eventos</h2>
+             </div>
+          </div>
+
+        </div>
+      </main>
     </div>
-    <script src="/js/script.js"></script>
-</body>
+    
+    <script src="/js/script.js" defer></script>
+  </body>
 </html>
