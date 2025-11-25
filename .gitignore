@@ -1,4 +1,37 @@
-extra/
-.env
-dbfile/
+# Node.js
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Build / dist
+dist/
+*.map
+# TypeScript
+*.tsbuildinfo
+# Logs
+logs/
+*.log
+log.txt
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+# Coverage / testing
+coverage/
+.cache/
+.tmp/
+# Environment variables
+.env
+.env.local
+.env.*.local
+# OS / Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.idea/
+.vscode/
+*.iml
+# Extra folders
+extra/
