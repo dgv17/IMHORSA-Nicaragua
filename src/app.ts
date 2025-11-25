@@ -31,7 +31,7 @@ app.use(session({
   cookie: { 
     httpOnly: true,
     sameSite: "strict",   // evita CSRF básico
-    secure: false         // en producción pon true si usas HTTPS
+    secure: true         // en producción pon true si usas HTTPS
   }
 }));
 const csrfProtection = csrf({ cookie: false });

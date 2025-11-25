@@ -1,4 +1,4 @@
-USE `imhorsa`;
+USE railway;
 INSERT INTO departamentos (nombre) VALUES
 ('Boaco'),
 ('Carazo'),
@@ -315,20 +315,11 @@ WHERE r.nombre = 'gerente_general'
     'ver_clientes','ver_productos','crear_productos','editar_productos','eliminar_productos',
     'gestionar_cotizaciones','editar_cotizaciones'
   );
-  SET @key = 'aeskeyimhorsadev';
 INSERT INTO usuarios (username, password_user, nombre, correo, rol_id)
 VALUES (
     'admonos',
-    AES_ENCRYPT('imhorsanicdev', @key),
+    '5afd149417f6f4c912aa7bc337ffb8eb29b949f50af5bcff0e8509ed2cdae3cc2d8d04e60bc6d7eb0f9a65f15f9bc9bc5e996296048e85a86bcf30a568929cb1',
     'Dylan',
     'dgodoyvallecillo919@gmail.com',
-    1
+    2
 );
-
-select*from usuarios;
-SELECT 
-    id, username, nombre, correo
-FROM usuarios
-WHERE username = 'admonos'
-  AND CAST(AES_DECRYPT(password_user, @key) AS CHAR) = 'imhorsanicdev';
-

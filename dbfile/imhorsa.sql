@@ -1,6 +1,4 @@
-DROP DATABASE IF EXISTS `imhorsa`;
-CREATE DATABASE `imhorsa`;
-USE `imhorsa`;
+USE railway;
 -- 1) Ubicaciones
 CREATE TABLE departamentos (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -159,7 +157,7 @@ CREATE TABLE rol_permiso (
 CREATE TABLE usuarios (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(25) NOT NULL UNIQUE,
-  password_user VARBINARY(256) NOT NULL,
+  password_user VARCHAR(256) NOT NULL,
   nombre VARCHAR(25),
   correo VARCHAR(50),
   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -174,13 +172,3 @@ CREATE TABLE restore_tokens (
   expires_at DATETIME NOT NULL,
   FOREIGN KEY (user_id) REFERENCES usuarios(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
-
-
-select*from direcciones;
-select*from municipios;
-select*from accesorios;
-select*from cotizaciones;
-select*from clientes join cliente_juridico;
-
-select*from rol_permiso;
-select*from roles
