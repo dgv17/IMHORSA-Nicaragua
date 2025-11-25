@@ -24,3 +24,11 @@ export function dividirNombreCompleto(nombreCompleto: string) {
   const segundo_apellido = partes.length > 2 ? partes[partes.length - 1] : null;
   return { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido };
 }
+export function validarCorreo(correo: string): string | null {
+  const trimmed = correo.trim();
+  if (trimmed.length < 3) return "El correo es demasiado corto";
+  if (trimmed.length > 50) return "El correo no puede superar 50 caracteres";
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(trimmed)) return "Formato de correo inválido";
+  return null;
+}

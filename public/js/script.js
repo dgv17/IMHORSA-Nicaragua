@@ -972,6 +972,76 @@ function cargarRoles() {
         }
     });
 }
+function initAgregarUsuario() {
+    const form = document.querySelector("#agregar-usuario .form-wrapper");
+    if (!form)
+        return;
+    const btnGuardar = form.querySelector("button");
+    btnGuardar.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const username = form.querySelector("input[name='username']").value;
+        const password = form.querySelector("input[name='password_user']").value;
+        const nombre = form.querySelector("input[name='nombre']").value;
+        const correo = form.querySelector("input[name='correo']").value;
+        const rol = form.querySelector("select[name='rol']").value;
+        const errores = [];
+        const errUser = validarUsernameFront(username);
+        if (errUser)
+            errores.push(errUser);
+        const errPass = validarPasswordFront(password);
+        if (errPass)
+            errores.push(errPass);
+        const errNombre = validarNombreUsuarioFront(nombre);
+        if (errNombre)
+            errores.push(errNombre);
+        const errCorreo = validarCorreo(correo);
+        if (errCorreo)
+            errores.push(errCorreo);
+        if (!rol)
+            errores.push("Debe seleccionar un rol");
+        if (errores.length > 0) {
+            errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+            return;
+        }
+        mostrarNotif("Guardando usuario...", "loading");
+        try {
+            const token = yield getCsrfToken();
+            const res = yield fetch("/admin/usuarios", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token,
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({ username, password_user: password, nombre, correo, rol_id: rol })
+            });
+            const data = yield res.json();
+            if (!res.ok) {
+                if (data.errores && Array.isArray(data.errores)) {
+                    data.errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+                }
+                else {
+                    mostrarNotif(data.error || "Error al crear usuario", "error");
+                }
+                return;
+            }
+            mostrarNotif("Usuario creado correctamente", "success");
+            form.querySelector("input[name='username']").value = "";
+            form.querySelector("input[name='password_user']").value = "";
+            form.querySelector("input[name='nombre']").value = "";
+            form.querySelector("input[name='correo']").value = "";
+            form.querySelector("select[name='rol']").selectedIndex = 0;
+            const details = document.getElementById("agregar-usuario");
+            if (details)
+                details.open = false;
+            cargarUsuarios(); // refrescar tabla
+        }
+        catch (err) {
+            console.error("Error al crear usuario:", err);
+            mostrarNotif("Error de conexión", "error");
+        }
+    }));
+}
 // Vistas de panel admin
 function showSection(key) {
     document.querySelectorAll(".content-section").forEach((section) => {
@@ -1037,6 +1107,7 @@ document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, vo
         initPanelNavigation();
         initSidebarToggle();
         initHomeActions();
+        initAgregarUsuario();
     }
 }));
 document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {

@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { encryptLuciferBlocks, decryptLuciferBlocks } from "../utils/lucifer";
 import nodemailer from "nodemailer";
 import path from "path";
+import { validarCorreo } from "../utils/validaciones";
+
 
 export async function login(req: Request, res: Response) {
   const { username, password } = req.body;
@@ -151,6 +153,39 @@ export async function getRoles(req: Request, res: Response) {
     res.json(rows);
   } catch (err) {
     console.error("Error al obtener roles:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+
+export async function createUsuario(req: Request, res: Response) {
+  const { username, password_user, nombre, correo, rol_id } = req.body;
+  const errores: string[] = [];
+
+  if (!username || username.trim().length < 3 || username.trim().length > 25)
+    errores.push("El username debe tener entre 3 y 25 caracteres");
+  if (!password_user || password_user.length < 6)
+    errores.push("La contraseña debe tener al menos 6 caracteres");
+  if (!nombre || nombre.trim().length < 3 || nombre.trim().length > 25)
+    errores.push("El nombre debe tener entre 3 y 25 caracteres");
+  const correoError = validarCorreo(correo);
+  if (correoError) errores.push(correoError);
+  if (!rol_id) errores.push("Debe seleccionar un rol");
+  if (errores.length > 0) {
+    return res.status(400).json({ errores });
+  }
+  try {
+    const bcryptHash = await bcrypt.hash(password_user, 12);
+    const luciferCipher = encryptLuciferBlocks(bcryptHash, process.env.LUCIFER_KEY!);
+    const [result]: any = await pool.query(
+      "INSERT INTO usuarios (username, password_user, nombre, correo, rol_id) VALUES (?, ?, ?, ?, ?)",
+      [username.trim(), luciferCipher, nombre.trim(), correo.trim(), rol_id]
+    );
+    res.json({ success: true, id: result.insertId });
+  } catch (err: any) {
+    console.error("Error al crear usuario:", err);
+    if (err.code === "ER_DUP_ENTRY") {
+      return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
+    }
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }

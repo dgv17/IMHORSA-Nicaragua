@@ -1013,6 +1013,66 @@ async function cargarRoles(): Promise<void> {
     console.error("Error al mostrar roles:", err);
   }
 }
+function initAgregarUsuario(): void {
+  const form = document.querySelector("#agregar-usuario .form-wrapper") as HTMLElement;
+  if (!form) return;
+
+  const btnGuardar = form.querySelector("button") as HTMLButtonElement;
+  btnGuardar.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const username = (form.querySelector("input[name='username']") as HTMLInputElement).value;
+    const password = (form.querySelector("input[name='password_user']") as HTMLInputElement).value;
+    const nombre = (form.querySelector("input[name='nombre']") as HTMLInputElement).value;
+    const correo = (form.querySelector("input[name='correo']") as HTMLInputElement).value;
+    const rol = (form.querySelector("select[name='rol']") as HTMLSelectElement).value;
+
+    const errores: string[] = [];
+    const errUser = validarUsernameFront(username); if (errUser) errores.push(errUser);
+    const errPass = validarPasswordFront(password); if (errPass) errores.push(errPass);
+    const errNombre = validarNombreUsuarioFront(nombre); if (errNombre) errores.push(errNombre);
+    const errCorreo = validarCorreo(correo); if (errCorreo) errores.push(errCorreo);
+    if (!rol) errores.push("Debe seleccionar un rol");
+    if (errores.length > 0) {
+      errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+      return;
+    }
+    mostrarNotif("Guardando usuario...", "loading");
+    try {
+      const token = await getCsrfToken();
+      const res = await fetch("/admin/usuarios", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ username, password_user: password, nombre, correo, rol_id: rol })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.errores && Array.isArray(data.errores)) {
+          data.errores.forEach((err: string, i: number) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+        } else {
+          mostrarNotif(data.error || "Error al crear usuario", "error");
+        }
+        return;
+      }
+      mostrarNotif("Usuario creado correctamente", "success");
+      (form.querySelector("input[name='username']") as HTMLInputElement).value = "";
+      (form.querySelector("input[name='password_user']") as HTMLInputElement).value = "";
+      (form.querySelector("input[name='nombre']") as HTMLInputElement).value = "";
+      (form.querySelector("input[name='correo']") as HTMLInputElement).value = "";
+      (form.querySelector("select[name='rol']") as HTMLSelectElement).selectedIndex = 0;
+      const details = document.getElementById("agregar-usuario") as HTMLDetailsElement;
+      if (details) details.open = false;
+      cargarUsuarios(); // refrescar tabla
+    } catch (err) {
+      console.error("Error al crear usuario:", err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+
 // Vistas de panel admin
 
 function showSection(key: string): void {
@@ -1081,6 +1141,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     initPanelNavigation();
     initSidebarToggle();
     initHomeActions();
+    initAgregarUsuario();
   }
 });
 document.addEventListener("DOMContentLoaded", async () => {

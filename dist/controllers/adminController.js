@@ -10,12 +10,14 @@ exports.restoreForm = restoreForm;
 exports.restorePassword = restorePassword;
 exports.getUsuarios = getUsuarios;
 exports.getRoles = getRoles;
+exports.createUsuario = createUsuario;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const lucifer_1 = require("../utils/lucifer");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const path_1 = __importDefault(require("path"));
+const validaciones_1 = require("../utils/validaciones");
 async function login(req, res) {
     const { username, password } = req.body;
     try {
@@ -142,6 +144,37 @@ async function getRoles(req, res) {
     }
     catch (err) {
         console.error("Error al obtener roles:", err);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+async function createUsuario(req, res) {
+    const { username, password_user, nombre, correo, rol_id } = req.body;
+    const errores = [];
+    if (!username || username.trim().length < 3 || username.trim().length > 25)
+        errores.push("El username debe tener entre 3 y 25 caracteres");
+    if (!password_user || password_user.length < 6)
+        errores.push("La contraseña debe tener al menos 6 caracteres");
+    if (!nombre || nombre.trim().length < 3 || nombre.trim().length > 25)
+        errores.push("El nombre debe tener entre 3 y 25 caracteres");
+    const correoError = (0, validaciones_1.validarCorreo)(correo);
+    if (correoError)
+        errores.push(correoError);
+    if (!rol_id)
+        errores.push("Debe seleccionar un rol");
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+    try {
+        const bcryptHash = await bcrypt_1.default.hash(password_user, 12);
+        const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
+        const [result] = await db_1.pool.query("INSERT INTO usuarios (username, password_user, nombre, correo, rol_id) VALUES (?, ?, ?, ?, ?)", [username.trim(), luciferCipher, nombre.trim(), correo.trim(), rol_id]);
+        res.json({ success: true, id: result.insertId });
+    }
+    catch (err) {
+        console.error("Error al crear usuario:", err);
+        if (err.code === "ER_DUP_ENTRY") {
+            return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
+        }
         res.status(500).json({ error: "Error interno del servidor" });
     }
 }
