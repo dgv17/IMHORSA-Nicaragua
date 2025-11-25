@@ -19,7 +19,6 @@ const PORT = Number(process.env.PORT) || 3000;
 const allowedOrigin = process.env.FRONTEND_ORIGIN || "https://imhorsa.vercel.app";
 app.use(cors({ origin: allowedOrigin, credentials: true }));
 
-app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
@@ -30,7 +29,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     httpOnly: true,
-    sameSite: "strict",   // evita CSRF básico
+    sameSite: "none",   // evita CSRF básico
     secure: true         // en producción pon true si usas HTTPS
   }
 }));
@@ -49,6 +48,9 @@ app.use("/api/accesorios", accesoriosRoutes);
 app.use("/admin", adminRoutes);
 app.get("/", (req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));
+});
+app.get("/html/:page", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "html", `${req.params.page}.html`));
 });
 
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

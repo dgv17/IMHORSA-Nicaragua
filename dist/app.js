@@ -18,8 +18,9 @@ const path_1 = __importDefault(require("path"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = process.env.PORT || 3000;
-app.use((0, cors_1.default)());
+const PORT = Number(process.env.PORT) || 3000;
+const allowedOrigin = process.env.FRONTEND_ORIGIN || "https://imhorsa.vercel.app";
+app.use((0, cors_1.default)({ origin: allowedOrigin, credentials: true }));
 app.use(express_1.default.json());
 app.use(express_1.default.static("public"));
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -29,8 +30,8 @@ app.use((0, express_session_1.default)({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        sameSite: "strict", // evita CSRF básico
-        secure: false // en producción pon true si usas HTTPS
+        sameSite: "none", // evita CSRF básico
+        secure: true // en producción pon true si usas HTTPS
     }
 }));
 const csrfProtection = (0, csurf_1.default)({ cookie: false });
@@ -48,13 +49,15 @@ app.use("/admin", admin_1.default);
 app.get("/", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "index.html"));
 });
+app.get("/html/:page", (req, res) => {
+    res.sendFile(path_1.default.join(process.cwd(), "public", "html", `${req.params.page}.html`));
+});
 app.use((err, req, res, next) => {
     if (err.code === "EBADCSRFTOKEN") {
         return res.status(403).send("Solicitud inválida o expirada (CSRF detectado)");
     }
     next(err);
 });
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+app.get("/health", (_req, res) => res.send("OK"));
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));
 //# sourceMappingURL=app.js.map

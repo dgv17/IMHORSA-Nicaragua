@@ -22,7 +22,7 @@ exports.updateVehiculoStock = updateVehiculoStock;
 exports.getSolicitudesVehiculos = getSolicitudesVehiculos;
 exports.updateCotizacionVehiculo = updateCotizacionVehiculo;
 exports.enviarCorreoCotizacionVehiculo = enviarCorreoCotizacionVehiculo;
-const db_1 = require("../models/db");
+const db_1 = __importDefault(require("../models/db"));
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const lucifer_1 = require("../utils/lucifer");
@@ -31,7 +31,7 @@ const validaciones_1 = require("../utils/validaciones");
 async function login(req, res) {
     const { username, password } = req.body;
     try {
-        const [rows] = await db_1.pool.query("SELECT id, username, password_user, rol_id FROM usuarios WHERE username = ?", [username]);
+        const [rows] = await db_1.default.query("SELECT id, username, password_user, rol_id FROM usuarios WHERE username = ?", [username]);
         if (rows.length === 0) {
             return res.status(401).send("Usuario no encontrado");
         }
@@ -61,14 +61,14 @@ function logout(req, res) {
 async function restoreRequest(req, res) {
     const { correores } = req.body;
     try {
-        const [rows] = await db_1.pool.query("SELECT id, correo FROM usuarios WHERE correo = ?", [correores]);
+        const [rows] = await db_1.default.query("SELECT id, correo FROM usuarios WHERE correo = ?", [correores]);
         if (rows.length === 0) {
             return res.status(404).send("No existe usuario con ese correo");
         }
         const user = rows[0];
         const token = crypto_1.default.randomBytes(32).toString("hex");
         const expires = new Date(Date.now() + 1000 * 60 * 30); // 30 min
-        await db_1.pool.query("INSERT INTO restore_tokens (user_id, token, expires_at) VALUES (?, ?, ?)", [user.id, token, expires]);
+        await db_1.default.query("INSERT INTO restore_tokens (user_id, token, expires_at) VALUES (?, ?, ?)", [user.id, token, expires]);
         // Configurar transporte de correo
         const transporter = nodemailer_1.default.createTransport({
             service: "gmail",
@@ -96,7 +96,7 @@ async function restoreRequest(req, res) {
 async function restoreForm(req, res) {
     const { token } = req.params;
     try {
-        const [rows] = await db_1.pool.query(`SELECT u.username 
+        const [rows] = await db_1.default.query(`SELECT u.username 
        FROM restore_tokens rt 
        JOIN usuarios u ON rt.user_id = u.id 
        WHERE rt.token = ? AND rt.expires_at > NOW()`, [token]);
@@ -115,18 +115,18 @@ async function restorePassword(req, res) {
     const { token } = req.params;
     const { newPassword } = req.body;
     try {
-        const [rows] = await db_1.pool.query("SELECT user_id FROM restore_tokens WHERE token = ? AND expires_at > NOW()", [token]);
+        const [rows] = await db_1.default.query("SELECT user_id FROM restore_tokens WHERE token = ? AND expires_at > NOW()", [token]);
         if (rows.length === 0) {
             return res.status(403).send("Link inválido o expirado");
         }
         const userId = rows[0].user_id;
         const bcryptHash = await bcrypt_1.default.hash(newPassword, 12);
         const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
-        await db_1.pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+        await db_1.default.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
             luciferCipher,
             userId,
         ]);
-        await db_1.pool.query("DELETE FROM restore_tokens WHERE token = ?", [token]);
+        await db_1.default.query("DELETE FROM restore_tokens WHERE token = ?", [token]);
         return res.redirect("/admin/adlog1n");
     }
     catch (error) {
@@ -137,7 +137,7 @@ async function restorePassword(req, res) {
 // Obtener lista de usuarios
 async function getUsuarios(req, res) {
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT u.id, u.username, u.nombre, u.correo, r.nombre AS rol
       FROM usuarios u
       JOIN roles r ON u.rol_id = r.id
@@ -153,7 +153,7 @@ async function getUsuarios(req, res) {
 // Obtener lista de roles
 async function getRoles(req, res) {
     try {
-        const [rows] = await db_1.pool.query("SELECT id, nombre FROM roles ORDER BY id ASC");
+        const [rows] = await db_1.default.query("SELECT id, nombre FROM roles ORDER BY id ASC");
         res.json(rows);
     }
     catch (err) {
@@ -181,7 +181,7 @@ async function createUsuario(req, res) {
     try {
         const bcryptHash = await bcrypt_1.default.hash(password_user, 12);
         const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
-        const [result] = await db_1.pool.query("INSERT INTO usuarios (username, password_user, nombre, correo, rol_id) VALUES (?, ?, ?, ?, ?)", [username.trim(), luciferCipher, nombre.trim(), correo.trim(), rol_id]);
+        const [result] = await db_1.default.query("INSERT INTO usuarios (username, password_user, nombre, correo, rol_id) VALUES (?, ?, ?, ?, ?)", [username.trim(), luciferCipher, nombre.trim(), correo.trim(), rol_id]);
         res.json({ success: true, id: result.insertId });
     }
     catch (err) {
@@ -211,7 +211,7 @@ async function updateUsuario(req, res) {
         return res.status(400).json({ errores });
     }
     try {
-        await db_1.pool.query("UPDATE usuarios SET username = ?, nombre = ?, correo = ?, rol_id = ? WHERE id = ?", [username.trim(), nombre.trim(), correo.trim(), rol_id, id]);
+        await db_1.default.query("UPDATE usuarios SET username = ?, nombre = ?, correo = ?, rol_id = ? WHERE id = ?", [username.trim(), nombre.trim(), correo.trim(), rol_id, id]);
         res.json({ success: true });
     }
     catch (err) {
@@ -235,14 +235,14 @@ async function forcePasswordChange(req, res) {
         return res.status(400).json({ errores });
     }
     try {
-        const [rows] = await db_1.pool.query("SELECT id FROM usuarios WHERE username = ?", [username.trim()]);
+        const [rows] = await db_1.default.query("SELECT id FROM usuarios WHERE username = ?", [username.trim()]);
         if (rows.length === 0) {
             return res.status(404).json({ error: "Usuario no encontrado" });
         }
         const userId = rows[0].id;
         const bcryptHash = await bcrypt_1.default.hash(newPassword, 12);
         const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
-        await db_1.pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+        await db_1.default.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
             luciferCipher,
             userId,
         ]);
@@ -255,7 +255,7 @@ async function forcePasswordChange(req, res) {
 }
 async function getClientesNaturales(req, res) {
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT cn.id,
              CONCAT_WS(' ', cn.primer_nombre, cn.segundo_nombre, cn.primer_apellido, cn.segundo_apellido) AS nombre_completo,
              cn.cedula,
@@ -279,7 +279,7 @@ async function getClientesNaturales(req, res) {
 }
 async function getClientesJuridicos(req, res) {
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT cj.id,
              cj.nombre AS nombre_empresa,
              cj.correo,
@@ -323,17 +323,17 @@ async function updateClienteNatural(req, res) {
     }
     try {
         // Buscar o crear dirección
-        const [rows] = await db_1.pool.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
+        const [rows] = await db_1.default.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
         let direccionId;
         if (rows.length > 0) {
             direccionId = rows[0].id;
         }
         else {
-            const [result] = await db_1.pool.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
+            const [result] = await db_1.default.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
             direccionId = result.insertId;
         }
         // Actualizar cliente natural
-        await db_1.pool.query(`UPDATE cliente_natural 
+        await db_1.default.query(`UPDATE cliente_natural 
        SET primer_nombre = ?, segundo_nombre = ?, primer_apellido = ?, segundo_apellido = ?, 
            cedula = ?, telefono = ?, correo = ?, direccion_id = ? 
        WHERE id = ?`, [
@@ -374,17 +374,17 @@ async function updateClienteJuridico(req, res) {
     }
     try {
         // Buscar o crear dirección
-        const [rows] = await db_1.pool.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
+        const [rows] = await db_1.default.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
         let direccionId;
         if (rows.length > 0) {
             direccionId = rows[0].id;
         }
         else {
-            const [result] = await db_1.pool.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
+            const [result] = await db_1.default.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
             direccionId = result.insertId;
         }
         // Actualizar cliente jurídico
-        await db_1.pool.query(`UPDATE cliente_juridico 
+        await db_1.default.query(`UPDATE cliente_juridico 
        SET nombre = ?, correo = ?, direccion_id = ? 
        WHERE id = ?`, [nombre_empresa.trim(), correo.trim(), direccionId, id]);
         res.json({ success: true });
@@ -396,7 +396,7 @@ async function updateClienteJuridico(req, res) {
 }
 async function getVehiculos(req, res) {
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT v.id, v.precio, v.stock,
              m.nombre AS modelo_nombre, m.anio,
              s.nombre AS serie_nombre, s.marca
@@ -418,7 +418,7 @@ async function updateVehiculoStock(req, res) {
         return res.status(400).json({ error: "Valor de stock inválido" });
     }
     try {
-        await db_1.pool.query("UPDATE vehiculos SET stock = ? WHERE id = ?", [
+        await db_1.default.query("UPDATE vehiculos SET stock = ? WHERE id = ?", [
             stock,
             id,
         ]);
@@ -431,7 +431,7 @@ async function updateVehiculoStock(req, res) {
 }
 async function getSolicitudesVehiculos(req, res) {
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT c.id,
              c.numero_factura,
              c.fecha_solicitud,
@@ -464,7 +464,7 @@ async function updateCotizacionVehiculo(req, res) {
         return res.status(400).json({ error: "Estado inválido" });
     }
     try {
-        await db_1.pool.query("UPDATE cotizaciones SET estado = ? WHERE id = ? AND tipo = 'vehiculo'", [estado, id]);
+        await db_1.default.query("UPDATE cotizaciones SET estado = ? WHERE id = ? AND tipo = 'vehiculo'", [estado, id]);
         res.json({ success: true });
     }
     catch (err) {

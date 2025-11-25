@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAccesorios = void 0;
 exports.postCotizacionAccesorio = postCotizacionAccesorio;
-const db_1 = require("../models/db");
+const db_1 = __importDefault(require("../models/db"));
 const accesoriosModel_1 = require("../models/accesoriosModel");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const axios_1 = __importDefault(require("axios"));
@@ -13,7 +13,7 @@ const validaciones_1 = require("../utils/validaciones");
 const getAccesorios = async (req, res) => {
     const serie = req.query.serie;
     try {
-        const [rows] = await db_1.pool.query(`
+        const [rows] = await db_1.default.query(`
       SELECT a.id, a.nombre, a.precio, a.descripcion, s.nombre AS serie, a.stock
       FROM accesorios a
       JOIN series s ON a.series_id = s.id
@@ -34,7 +34,7 @@ const getAccesorios = async (req, res) => {
 };
 exports.getAccesorios = getAccesorios;
 async function postCotizacionAccesorio(req, res) {
-    const connection = await db_1.pool.getConnection();
+    const connection = await db_1.default.getConnection();
     try {
         const captchaResponse = req.body["g-recaptcha-response"];
         if (!captchaResponse)

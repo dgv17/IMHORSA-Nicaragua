@@ -4,12 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postCotizacionEvento = postCotizacionEvento;
-const db_1 = require("../models/db");
+const db_1 = __importDefault(require("../models/db"));
 const eventoModel_1 = require("../models/eventoModel");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const axios_1 = __importDefault(require("axios"));
 async function postCotizacionEvento(req, res) {
-    const connection = await db_1.pool.getConnection();
+    const connection = await db_1.default.getConnection();
     try {
         const captchaResponse = req.body["g-recaptcha-response"];
         if (!captchaResponse)

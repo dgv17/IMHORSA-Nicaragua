@@ -4,13 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.postCotizacionVehiculo = postCotizacionVehiculo;
-const db_1 = require("../models/db");
+const db_1 = __importDefault(require("../models/db"));
 const cotizacionModel_1 = require("../models/cotizacionModel");
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const validaciones_1 = require("../utils/validaciones");
 const axios_1 = __importDefault(require("axios"));
 async function postCotizacionVehiculo(req, res) {
-    const connection = await db_1.pool.getConnection();
+    const connection = await db_1.default.getConnection();
     try {
         const captchaResponse = req.body["g-recaptcha-response"];
         if (!captchaResponse) {

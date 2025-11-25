@@ -472,6 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/vehiculo", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "CSRF-Token": token,
@@ -515,6 +516,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/evento", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "CSRF-Token": token,
@@ -568,6 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const token = yield getCsrfToken();
                 const res = yield fetch("/api/cotizacion/repuestos", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "CSRF-Token": token,
@@ -630,6 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const token = yield getCsrfToken();
                 const res = yield fetch("/api/accesorios/cotizacion", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "CSRF-Token": token,
@@ -670,6 +674,7 @@ function initLogin() {
             const token = yield getCsrfToken();
             const res = yield fetch("/admin/login", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     "CSRF-Token": token,
@@ -711,6 +716,7 @@ function initCorreoRestore() {
             const token = yield getCsrfToken();
             const res = yield fetch("/admin/restore-request", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     "CSRF-Token": token,
@@ -760,6 +766,7 @@ function initRestorePass() {
             const tokencsrf = yield getCsrfToken();
             const res = yield fetch(`/admin/restore/${token}`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     "CSRF-Token": tokencsrf,
@@ -785,48 +792,6 @@ function initRestorePass() {
         }
     }));
 }
-/*restoreForm.addEventListener("submit", async (e: Event) => {
-  e.preventDefault();
-  const pw = (
-    document.getElementById("newPassword") as HTMLInputElement
-  ).value.trim();
-  const pw2 = (
-    document.getElementById("confirmPassword") as HTMLInputElement
-  ).value.trim();
-  if (!pw || pw !== pw2) {
-    mostrarNotif("Las contraseñas no coinciden", "error");
-    return;
-  }
-  mostrarNotif("Procesando...", "loading");
-  const parts = window.location.pathname.split("/");
-  const token = parts[parts.length - 1];
-  try {
-    const tokencsrf = await getCsrfToken();
-    const res = await fetch(`/admin/restore/${token}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "CSRF-Token": tokencsrf,
-      },
-      body: JSON.stringify({ newPassword: pw }),
-    });
-    setTimeout(async () => {
-      if (res.ok) {
-        mostrarNotif("¡Contraseña restablecida con éxito!", "success");
-        setTimeout(() => {
-          window.location.href = "/admin/adlog1n";
-        }, 2000);
-      } else {
-        const text = await res.text();
-        mostrarNotif(text || "Error al restablecer", "error");
-      }
-    }, 3200);
-  } catch (err) {
-    console.error(err);
-    mostrarNotif("Error de conexión", "error");
-  }
-});
-}*/
 function getCurrentUserRole() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
@@ -1062,11 +1027,11 @@ function initAgregarUsuario() {
             const token = yield getCsrfToken();
             const res = yield fetch("/admin/usuarios", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     "CSRF-Token": token,
                 },
-                credentials: "same-origin",
                 body: JSON.stringify({
                     username,
                     password_user: password,
@@ -1182,6 +1147,7 @@ function initPasswordManagement() {
                 const token = yield getCsrfToken();
                 const res = yield fetch("/admin/restore-request", {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                         "CSRF-Token": token,
@@ -1743,11 +1709,11 @@ document.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, func
             const token = yield getCsrfToken();
             const res = yield fetch(`/admin/solicitudes/vehiculos/${id}/correo`, {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                     "CSRF-Token": token,
                 },
-                credentials: "same-origin",
                 body: JSON.stringify({ estado, numero_factura: factura }),
             });
             const data = yield res.json();
@@ -1773,10 +1739,10 @@ document.addEventListener("click", (e) => __awaiter(void 0, void 0, void 0, func
             const token = yield getCsrfToken();
             const res = yield fetch("/admin/logout", {
                 method: "POST",
+                credentials: "include",
                 headers: {
                     "CSRF-Token": token,
                 },
-                credentials: "same-origin",
             });
             const data = yield res.json();
             if (res.ok) {
