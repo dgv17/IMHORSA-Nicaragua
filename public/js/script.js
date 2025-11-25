@@ -898,22 +898,22 @@ function cargarUsuarios() {
             usuarios.forEach((u) => {
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-    <td>${u.username}</td>
-    <td>${u.nombre || "-"}</td>
-    <td>${u.correo || "-"}</td>
-    <td>${u.rol}</td>
-    <td>
-        <button 
-          class="cotizar-btn edit-btn"
-          data-id="${u.id}"
-          data-username="${u.username}"
-          data-nombre="${u.nombre || ""}"
-          data-correo="${u.correo || ""}"
-          data-rol="${u.rol}">
-          Editar
-        </button>
-      </td>
-    `;
+        <td>${u.username}</td>
+        <td>${u.nombre || "-"}</td>
+        <td>${u.correo || "-"}</td>
+        <td>${u.rol}</td>
+        <td>
+          <button 
+            class="cotizar-btn edit-btn"
+            data-id="${u.id}"
+            data-username="${u.username}"
+            data-nombre="${u.nombre || ""}"
+            data-correo="${u.correo || ""}"
+            data-rol="${u.rol}">
+            Editar
+          </button>
+        </td>
+      `;
                 tbody.appendChild(tr);
             });
             document.querySelectorAll(".edit-btn").forEach((btn) => {
@@ -924,10 +924,13 @@ function cargarUsuarios() {
                         details.open = true;
                         details.scrollIntoView({ behavior: "smooth", block: "start" });
                     }
+                    const idInput = document.querySelector("input[name='mod_id']");
                     const usernameInput = document.querySelector("input[name='mod_username']");
                     const nombreInput = document.querySelector("input[name='mod_nombre']");
                     const correoInput = document.querySelector("input[name='mod_correo']");
                     const rolSelect = document.querySelector("select[name='mod_rol']");
+                    if (idInput)
+                        idInput.value = target.dataset.id || "";
                     if (usernameInput)
                         usernameInput.value = target.dataset.username || "";
                     if (nombreInput)
@@ -1042,6 +1045,65 @@ function initAgregarUsuario() {
         }
     }));
 }
+function initModificarUsuario() {
+    const form = document.querySelector("#modificar-usuario .form-wrapper");
+    if (!form)
+        return;
+    const btnActualizar = form.querySelector("button");
+    btnActualizar.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const id = form.querySelector("input[name='mod_id']").value;
+        const username = form.querySelector("input[name='mod_username']").value;
+        const nombre = form.querySelector("input[name='mod_nombre']").value;
+        const correo = form.querySelector("input[name='mod_correo']").value;
+        const rol = form.querySelector("select[name='mod_rol']").value;
+        const errores = [];
+        const errUser = validarUsernameFront(username);
+        if (errUser)
+            errores.push(errUser);
+        const errNombre = validarNombreUsuarioFront(nombre);
+        if (errNombre)
+            errores.push(errNombre);
+        const errCorreo = validarCorreo(correo);
+        if (errCorreo)
+            errores.push(errCorreo);
+        if (!rol)
+            errores.push("Debe seleccionar un rol");
+        if (errores.length > 0) {
+            errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+            return;
+        }
+        mostrarNotif("Actualizando usuario...", "loading");
+        try {
+            const token = yield getCsrfToken();
+            const res = yield fetch(`/admin/usuarios/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token,
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({ username, nombre, correo, rol_id: rol })
+            });
+            const data = yield res.json();
+            if (!res.ok) {
+                if (data.errores && Array.isArray(data.errores)) {
+                    data.errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+                }
+                else {
+                    mostrarNotif(data.error || "Error al actualizar usuario", "error");
+                }
+                return;
+            }
+            mostrarNotif("Usuario actualizado correctamente", "success");
+            cargarUsuarios(); // refrescar tabla
+        }
+        catch (err) {
+            console.error("Error al actualizar usuario:", err);
+            mostrarNotif("Error de conexión", "error");
+        }
+    }));
+}
 // Vistas de panel admin
 function showSection(key) {
     document.querySelectorAll(".content-section").forEach((section) => {
@@ -1055,6 +1117,7 @@ function showSection(key) {
     if (key === "usuarios") {
         cargarUsuarios();
         cargarRoles();
+        initModificarUsuario();
     }
 }
 function initPanelNavigation() {

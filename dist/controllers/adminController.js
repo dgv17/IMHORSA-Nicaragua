@@ -11,6 +11,7 @@ exports.restorePassword = restorePassword;
 exports.getUsuarios = getUsuarios;
 exports.getRoles = getRoles;
 exports.createUsuario = createUsuario;
+exports.updateUsuario = updateUsuario;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -172,6 +173,34 @@ async function createUsuario(req, res) {
     }
     catch (err) {
         console.error("Error al crear usuario:", err);
+        if (err.code === "ER_DUP_ENTRY") {
+            return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
+        }
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+async function updateUsuario(req, res) {
+    const { id } = req.params;
+    const { username, nombre, correo, rol_id } = req.body;
+    const errores = [];
+    if (!username || username.trim().length < 3 || username.trim().length > 25)
+        errores.push("El username debe tener entre 3 y 25 caracteres");
+    if (!nombre || nombre.trim().length < 3 || nombre.trim().length > 25)
+        errores.push("El nombre debe tener entre 3 y 25 caracteres");
+    const correoError = (0, validaciones_1.validarCorreo)(correo);
+    if (correoError)
+        errores.push(correoError);
+    if (!rol_id)
+        errores.push("Debe seleccionar un rol");
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+    try {
+        await db_1.pool.query("UPDATE usuarios SET username = ?, nombre = ?, correo = ?, rol_id = ? WHERE id = ?", [username.trim(), nombre.trim(), correo.trim(), rol_id, id]);
+        res.json({ success: true });
+    }
+    catch (err) {
+        console.error("Error al actualizar usuario:", err);
         if (err.code === "ER_DUP_ENTRY") {
             return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
         }

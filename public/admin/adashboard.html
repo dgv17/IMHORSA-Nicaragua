@@ -174,7 +174,11 @@
               </table>
             </div>
             <!-- Desplegable: Agregar Usuario -->
-            <details id="agregar-usuario" class="card-dark" style="margin-top: 30px">
+            <details
+              id="agregar-usuario"
+              class="card-dark"
+              style="margin-top: 30px"
+            >
               <summary><strong>➕ Agregar Usuario</strong></summary>
               <div class="form-wrapper" style="margin-top: 20px">
                 <div class="form-group">
@@ -183,20 +187,19 @@
                 </div>
                 <div class="form-group">
                   <label>Contraseña</label>
-                  <input type="password" name="password_user" required/>
+                  <input type="password" name="password_user" required />
                 </div>
                 <div class="form-group">
                   <label>Nombre</label>
-                  <input type="text" name="nombre" required/>
+                  <input type="text" name="nombre" required />
                 </div>
                 <div class="form-group">
                   <label>Correo</label>
-                  <input type="email" name="correo" required/>
+                  <input type="email" name="correo" required />
                 </div>
                 <div class="form-group">
                   <label>Rol</label>
-                  <select name="rol">
-                  </select>
+                  <select name="rol"></select>
                 </div>
                 <div class="submit-container">
                   <input type="hidden" name="_csrf" />
@@ -207,7 +210,11 @@
               </div>
             </details>
             <!-- Desplegable: Modificar Usuario -->
-            <details id="modificar-usuario" class="card-dark" style="margin-top: 30px">
+            <details
+              id="modificar-usuario"
+              class="card-dark"
+              style="margin-top: 30px"
+            >
               <summary><strong>✏️ Modificar Usuario</strong></summary>
               <div class="form-wrapper" style="margin-top: 20px">
                 <div class="form-group">
@@ -224,10 +231,10 @@
                 </div>
                 <div class="form-group">
                   <label>Rol</label>
-                  <select name="mod_rol">
-                  </select>
+                  <select name="mod_rol"></select>
                 </div>
                 <div class="submit-container">
+                  <input type="hidden" name="mod_id" />
                   <input type="hidden" name="_csrf" />
                   <button class="cotizar-btn full-width">
                     Actualizar Usuario

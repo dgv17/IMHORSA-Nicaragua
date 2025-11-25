@@ -2,7 +2,7 @@ import { Router } from "express";
 import path from "path";
 import { 
   login, logout, restoreRequest, restoreForm, restorePassword,
-  getUsuarios, getRoles, createUsuario
+  getUsuarios, getRoles, createUsuario, updateUsuario
 } from "../controllers/adminController";
 import { requireAuth, requireAdmin } from "../middleware/auth";
 
@@ -49,5 +49,6 @@ router.get("/me", requireAuth, (req, res) => {
 router.get("/usuarios", requireAuth, getUsuarios);
 router.get("/roles", requireAuth, getRoles);
 router.post("/usuarios", requireAdmin, createUsuario);
+router.put("/usuarios/:id", requireAdmin, updateUsuario);
 
 export default router;
