@@ -7,7 +7,6 @@ import nodemailer from "nodemailer";
 import path from "path";
 import { validarCorreo } from "../utils/validaciones";
 
-
 export async function login(req: Request, res: Response) {
   const { username, password } = req.body;
   try {
@@ -89,14 +88,18 @@ export async function restoreForm(req: Request, res: Response) {
   const { token } = req.params;
   try {
     const [rows]: any = await pool.query(
-      "SELECT user_id FROM restore_tokens WHERE token = ? AND expires_at > NOW()",
+      `SELECT u.username 
+       FROM restore_tokens rt 
+       JOIN usuarios u ON rt.user_id = u.id 
+       WHERE rt.token = ? AND rt.expires_at > NOW()`,
       [token]
     );
     if (rows.length === 0) {
       return res.status(403).send("Link inválido o expirado");
     }
-    return res.sendFile(
-      path.join(process.cwd(), "public", "admin", "restorepass.html")
+    const user = rows[0];
+    res.redirect(
+      `/admin/restorepass.html?token=${encodeURIComponent(token)}&username=${encodeURIComponent(user.username)}`
     );
   } catch (error) {
     console.error("Error en restoreForm:", error);
@@ -149,7 +152,9 @@ export async function getUsuarios(req: Request, res: Response) {
 // Obtener lista de roles
 export async function getRoles(req: Request, res: Response) {
   try {
-    const [rows] = await pool.query("SELECT id, nombre FROM roles ORDER BY id ASC");
+    const [rows] = await pool.query(
+      "SELECT id, nombre FROM roles ORDER BY id ASC"
+    );
     res.json(rows);
   } catch (err) {
     console.error("Error al obtener roles:", err);
@@ -175,7 +180,10 @@ export async function createUsuario(req: Request, res: Response) {
   }
   try {
     const bcryptHash = await bcrypt.hash(password_user, 12);
-    const luciferCipher = encryptLuciferBlocks(bcryptHash, process.env.LUCIFER_KEY!);
+    const luciferCipher = encryptLuciferBlocks(
+      bcryptHash,
+      process.env.LUCIFER_KEY!
+    );
     const [result]: any = await pool.query(
       "INSERT INTO usuarios (username, password_user, nombre, correo, rol_id) VALUES (?, ?, ?, ?, ?)",
       [username.trim(), luciferCipher, nombre.trim(), correo.trim(), rol_id]
@@ -184,7 +192,9 @@ export async function createUsuario(req: Request, res: Response) {
   } catch (err: any) {
     console.error("Error al crear usuario:", err);
     if (err.code === "ER_DUP_ENTRY") {
-      return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
+      return res
+        .status(400)
+        .json({ errores: ["El username o correo ya están registrados"] });
     }
     res.status(500).json({ error: "Error interno del servidor" });
   }
@@ -214,7 +224,9 @@ export async function updateUsuario(req: Request, res: Response) {
   } catch (err: any) {
     console.error("Error al actualizar usuario:", err);
     if (err.code === "ER_DUP_ENTRY") {
-      return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
+      return res
+        .status(400)
+        .json({ errores: ["El username o correo ya están registrados"] });
     }
     res.status(500).json({ error: "Error interno del servidor" });
   }
@@ -240,7 +252,10 @@ export async function forcePasswordChange(req: Request, res: Response) {
     }
     const userId = rows[0].id;
     const bcryptHash = await bcrypt.hash(newPassword, 12);
-    const luciferCipher = encryptLuciferBlocks(bcryptHash, process.env.LUCIFER_KEY!);
+    const luciferCipher = encryptLuciferBlocks(
+      bcryptHash,
+      process.env.LUCIFER_KEY!
+    );
     await pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
       luciferCipher,
       userId,
@@ -366,7 +381,8 @@ export async function updateClienteNatural(req: Request, res: Response) {
 // Actualizar Cliente Jurídico
 export async function updateClienteJuridico(req: Request, res: Response) {
   const { id } = req.params;
-  const { nombre_empresa, correo, departamento, municipio, direccion } = req.body;
+  const { nombre_empresa, correo, departamento, municipio, direccion } =
+    req.body;
 
   const errores: string[] = [];
   if (!nombre_empresa) errores.push("Debe ingresar el nombre de la empresa");
@@ -406,5 +422,131 @@ export async function updateClienteJuridico(req: Request, res: Response) {
   } catch (error) {
     console.error("Error al actualizar cliente jurídico:", error);
     res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+export async function getVehiculos(req: Request, res: Response) {
+  try {
+    const [rows] = await pool.query(`
+      SELECT v.id, v.precio, v.stock,
+             m.nombre AS modelo_nombre, m.anio,
+             s.nombre AS serie_nombre, s.marca
+      FROM vehiculos v
+      JOIN modelos m ON v.modelo_id = m.id
+      JOIN series s ON m.serie_id = s.id
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error al obtener vehículos:", err);
+    res.status(500).json({ error: "Error al obtener vehículos" });
+  }
+}
+
+export async function updateVehiculoStock(req: Request, res: Response) {
+  const { id } = req.params;
+  const { stock } = req.body;
+  if (stock !== "0" && stock !== "1") {
+    return res.status(400).json({ error: "Valor de stock inválido" });
+  }
+  try {
+    await pool.query("UPDATE vehiculos SET stock = ? WHERE id = ?", [
+      stock,
+      id,
+    ]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error al actualizar stock:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+export async function getSolicitudesVehiculos(req: Request, res: Response) {
+  try {
+    const [rows]: any = await pool.query(`
+      SELECT c.id,
+             c.numero_factura,
+             c.fecha_solicitud,
+             c.estado,
+             CASE 
+               WHEN c.tipo = 'vehiculo' AND cn.id IS NOT NULL 
+                 THEN CONCAT_WS(' ', cn.primer_nombre, cn.segundo_nombre, cn.primer_apellido, cn.segundo_apellido)
+               WHEN c.tipo = 'vehiculo' AND cj.id IS NOT NULL 
+                 THEN cj.nombre
+               ELSE 'Desconocido'
+             END AS cliente
+      FROM cotizaciones c
+      LEFT JOIN clientes cl ON c.cliente_id = cl.id
+      LEFT JOIN cliente_natural cn ON cl.natural_id = cn.id
+      LEFT JOIN cliente_juridico cj ON cl.juridico_id = cj.id
+      WHERE c.tipo = 'vehiculo'
+      ORDER BY c.fecha_solicitud DESC
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error al obtener solicitudes de vehículos:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+export async function updateCotizacionVehiculo(req: Request, res: Response) {
+  const { id } = req.params;
+  const { estado } = req.body;
+  if (!["En proceso", "Aceptada", "Denegada"].includes(estado)) {
+    return res.status(400).json({ error: "Estado inválido" });
+  }
+
+  try {
+    await pool.query(
+      "UPDATE cotizaciones SET estado = ? WHERE id = ? AND tipo = 'vehiculo'",
+      [estado, id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error al actualizar cotización de vehículo:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+export async function enviarCorreoCotizacionVehiculo(
+  req: Request,
+  res: Response
+) {
+  const { estado, numero_factura } = req.body;
+
+  try {
+    // Configurar transporte
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // Plantillas según estado
+    let asunto = "";
+    let mensajeHTML = "";
+
+    if (estado === "En proceso") {
+      asunto = `Cotización ${numero_factura} registrada`;
+      mensajeHTML = `<h2>La cotización fue registrada correctamente</h2>
+                     <p>Esperar a que sea aceptada o denegada</p>`;
+    } else if (estado === "Aceptada") {
+      asunto = `Cotización ${numero_factura} aceptada`;
+      mensajeHTML = `<h2>La cotización fue aceptada, contactarse con el cliente via whatsapp</h2>
+                     <p>Pronto nos pondremos en contacto para continuar el proceso.</p>`;
+    } else if (estado === "Denegada") {
+      asunto = `Cotización ${numero_factura} denegada`;
+      mensajeHTML = `<h2>La cotización fue denegada</h2>
+                     <p>La cotizacion fue denegada por un administrador o el gerente general</p>`;
+    }
+
+    // Enviar al encargado general
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: "sansgodoyvallecillo123@gmail.com",
+      subject: asunto,
+      html: mensajeHTML,
+    });
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error al enviar correo:", err);
+    res.status(500).json({ error: "Error al enviar correo" });
   }
 }

@@ -51,5 +51,20 @@ router.get("/clientes/naturales", auth_1.requireAuth, adminController_1.getClien
 router.get("/clientes/juridicos", auth_1.requireAuth, adminController_1.getClientesJuridicos);
 router.put("/clientes/naturales/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateClienteNatural);
 router.put("/clientes/juridicos/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateClienteJuridico);
+router.get("/vehiculos", auth_1.requireAuth, adminController_1.getVehiculos);
+router.put("/vehiculos/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateVehiculoStock);
+router.get("/solicitudes/vehiculos", auth_1.requireAuth, adminController_1.getSolicitudesVehiculos);
+router.put("/solicitudes/vehiculos/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateCotizacionVehiculo);
+router.post("/solicitudes/vehiculos/:id/correo", auth_1.requireAdminOrGerenteGeneral, adminController_1.enviarCorreoCotizacionVehiculo);
+router.post("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Error al cerrar sesión:", err);
+            return res.status(500).json({ error: "Error al cerrar sesión" });
+        }
+        res.clearCookie("connect.sid");
+        res.json({ success: true });
+    });
+});
 exports.default = router;
 //# sourceMappingURL=admin.js.map

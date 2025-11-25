@@ -7,6 +7,9 @@ function requireAuth(req, res, next) {
     if (req.session && req.session.user) {
         return next();
     }
+    if (req.xhr || req.headers.accept?.includes("application/json")) {
+        return res.status(401).json({ error: "No autenticado" });
+    }
     return res.redirect("/admin/adlog1n");
 }
 function requireAdmin(req, res, next) {
@@ -16,7 +19,7 @@ function requireAdmin(req, res, next) {
     return res.status(403).send("Acceso denegado: solo administradores");
 }
 function requireAdminOrGerenteGeneral(req, res, next) {
-    const user = req.session.user;
+    const user = req.session?.user;
     if (!user) {
         return res.status(401).json({ error: "No autenticado" });
     }

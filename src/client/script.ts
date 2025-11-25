@@ -784,12 +784,64 @@ function initCorreoRestore(): void {
   });
 }
 function initRestorePass(): void {
-  const restoreForm = document.getElementById(
-    "restoreForm"
-  ) as HTMLFormElement | null;
+  const restoreForm = document.getElementById("restoreForm") as HTMLFormElement | null;
   if (!restoreForm) return;
 
+  // 👉 Leer token y username desde query params
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get("token");
+  const username = params.get("username");
+
+  if (username) {
+    const userInput = document.getElementById("username") as HTMLInputElement | null;
+    if (userInput) {
+      userInput.value = username;
+    }
+  }
+
   restoreForm.addEventListener("submit", async (e: Event) => {
+    e.preventDefault();
+
+    const pw = (document.getElementById("newPassword") as HTMLInputElement).value.trim();
+    const pw2 = (document.getElementById("confirmPassword") as HTMLInputElement).value.trim();
+
+    if (!pw || pw !== pw2) {
+      mostrarNotif("Las contraseñas no coinciden", "error");
+      return;
+    }
+
+    mostrarNotif("Procesando...", "loading");
+
+    try {
+      const tokencsrf = await getCsrfToken();
+      const res = await fetch(`/admin/restore/${token}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": tokencsrf,
+        },
+        body: JSON.stringify({ newPassword: pw }),
+      });
+
+      setTimeout(async () => {
+        if (res.ok) {
+          mostrarNotif("¡Contraseña restablecida con éxito!", "success");
+          setTimeout(() => {
+            window.location.href = "/admin/adlog1n";
+          }, 2000);
+        } else {
+          const text = await res.text();
+          mostrarNotif(text || "Error al restablecer", "error");
+        }
+      }, 3200);
+    } catch (err) {
+      console.error(err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+
+  /*restoreForm.addEventListener("submit", async (e: Event) => {
     e.preventDefault();
     const pw = (
       document.getElementById("newPassword") as HTMLInputElement
@@ -830,7 +882,8 @@ function initRestorePass(): void {
       mostrarNotif("Error de conexión", "error");
     }
   });
-}
+}*/
+
 async function getCurrentUserRole(): Promise<number | null> {
   try {
     const res = await fetch("/admin/me", { credentials: "same-origin" });
@@ -1667,6 +1720,324 @@ function extraerParte(nombre: string, index: number): string {
   const partes = nombre.trim().split(" ");
   return partes[index] || "";
 }
+function cargarVehiculos(): void {
+  fetch("/admin/vehiculos")
+    .then((res) => res.json())
+    .then((vehiculos) => {
+      const tbody = document.getElementById("tabla-vehiculos")!;
+      tbody.innerHTML = "";
+      vehiculos.forEach((v: any) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${v.modelo_nombre}</td>
+          <td>${v.anio || "-"}</td>
+          <td>${v.serie_nombre}</td>
+          <td>${v.marca || "-"}</td>
+          <td>${v.precio}</td>
+          <td>${v.stock === 1 ? "Hay stock" : "No hay stock"}</td>
+          <td>
+            <button class="cotizar-btn" data-id="${v.id}" data-tipo="vehiculo">
+              Editar
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error al cargar vehículos:", err);
+      mostrarNotif("Error al cargar vehículos", "error");
+    });
+}
+
+async function cargarSelectVehiculos(): Promise<void> {
+  const select = document.querySelector(
+    "select[name='mod_vehiculo']"
+  ) as HTMLSelectElement;
+  if (!select) {
+    console.error("No se encontró el select mod_vehiculo");
+    return;
+  }
+
+  try {
+    const res = await fetch("/admin/vehiculos");
+    const vehiculos = await res.json();
+    select.innerHTML =
+      "<option disabled selected>Seleccione un vehículo...</option>";
+    vehiculos.forEach((v: any) => {
+      const opt = document.createElement("option");
+      opt.value = String(v.id);
+      opt.textContent = `${v.modelo_nombre} ${v.anio || ""} - ${v.marca || ""}`;
+      select.appendChild(opt);
+    });
+  } catch (err) {
+    console.error("Error al cargar vehículos en select:", err);
+    mostrarNotif("Error al cargar vehículos en select", "error");
+  }
+}
+document.addEventListener("click", (e) => {
+  const btn = (e.target as HTMLElement).closest("button");
+  if (!btn) return;
+
+  // --- Vehículos ---
+  if (btn.dataset.tipo === "vehiculo") {
+    const fila = btn.closest("tr")!;
+    const celdas = fila.querySelectorAll("td");
+    (
+      document.querySelector("input[name='mod_veh_id']") as HTMLInputElement
+    ).value = btn.dataset.id!;
+    const selectVehiculo = document.querySelector(
+      "select[name='mod_vehiculo']"
+    ) as HTMLSelectElement;
+    if (selectVehiculo) {
+      const modeloTexto = `${celdas[0].textContent} ${celdas[1].textContent} - ${celdas[3].textContent}`;
+      Array.from(selectVehiculo.options).forEach((opt) => {
+        if (opt.textContent === modeloTexto) {
+          selectVehiculo.value = opt.value;
+        }
+      });
+    }
+    const stockSelect = document.querySelector(
+      "select[name='mod_stock']"
+    ) as HTMLSelectElement;
+    if (stockSelect) {
+      stockSelect.value = celdas[5].textContent === "Hay stock" ? "1" : "0";
+    }
+    const detailsVeh = document.getElementById(
+      "modificar-vehiculo"
+    ) as HTMLDetailsElement;
+    if (detailsVeh) {
+      detailsVeh.open = true;
+      detailsVeh.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+});
+function initModificarVehiculo(): void {
+  const form = document.querySelector(
+    "#modificar-vehiculo .form-wrapper"
+  ) as HTMLElement;
+  if (!form) return;
+  const btnActualizar = form.querySelector("button") as HTMLButtonElement;
+  btnActualizar.addEventListener("click", async (e) => {
+    e.preventDefault();
+    const id = (
+      form.querySelector("input[name='mod_veh_id']") as HTMLInputElement
+    ).value;
+    const stock = (
+      form.querySelector("select[name='mod_stock']") as HTMLSelectElement
+    ).value;
+    mostrarNotif("Actualizando stock...", "loading");
+    try {
+      const token = await getCsrfToken();
+      const res = await fetch(`/admin/vehiculos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ stock }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        mostrarNotif(data.error || "Error al actualizar stock", "error");
+        return;
+      }
+      mostrarNotif("Stock actualizado correctamente", "success");
+      cargarVehiculos(); // refrescar tabla
+    } catch (err) {
+      console.error("Error al actualizar stock:", err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+function cargarSolicitudesVehiculos(): void {
+  fetch("/admin/solicitudes/vehiculos")
+    .then((res) => res.json())
+    .then((solicitudes) => {
+      const tbody = document.getElementById("tabla-cotizaciones-vehiculos")!;
+      tbody.innerHTML = "";
+      solicitudes.forEach((s: any) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${s.numero_factura || "-"}</td>
+          <td>${s.cliente}</td>
+          <td>${new Date(s.fecha_solicitud).toLocaleString()}</td>
+          <td>${s.estado}</td>
+          <td>
+            <button class="cotizar-btn" data-id="${
+              s.id
+            }" data-tipo="sol-vehiculo">
+              Gestionar
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((err) => {
+      console.error("Error al cargar solicitudes de vehículos:", err);
+      mostrarNotif("Error al cargar solicitudes de vehículos", "error");
+    });
+}
+document.addEventListener("click", (e) => {
+  const btn = (e.target as HTMLElement).closest("button");
+  if (!btn) return;
+  if (btn.dataset.tipo === "sol-vehiculo") {
+    const fila = btn.closest("tr")!;
+    const celdas = fila.querySelectorAll("td");
+    // Guardar id real en hidden
+    (
+      document.querySelector("input[name='cotizacion_id']") as HTMLInputElement
+    ).value = btn.dataset.id!;
+    // Mostrar factura en input visible
+    (
+      document.querySelector(
+        "input[name='cotizacion_factura']"
+      ) as HTMLInputElement
+    ).value = celdas[0].textContent || "";
+    // Estado actual
+    const estadoSelect = document.querySelector(
+      "select[name='cotizacion_estado']"
+    ) as HTMLSelectElement;
+    if (estadoSelect) {
+      estadoSelect.value = celdas[3].textContent || "Aceptada";
+    }
+    const detailsCot = document.getElementById(
+      "gestionar-cotizacion-vehiculo"
+    ) as HTMLDetailsElement;
+    if (detailsCot) {
+      detailsCot.open = true;
+      detailsCot.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+});
+function initGestionarCotizacionVehiculo(): void {
+  const form = document.querySelector(
+    "#gestionar-cotizacion-vehiculo .form-wrapper"
+  ) as HTMLElement;
+  if (!form) return;
+
+  const btnActualizar = form.querySelector("button") as HTMLButtonElement;
+  btnActualizar.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const id = (
+      form.querySelector("input[name='cotizacion_id']") as HTMLInputElement
+    ).value;
+    const estado = (
+      form.querySelector(
+        "select[name='cotizacion_estado']"
+      ) as HTMLSelectElement
+    ).value;
+
+    mostrarNotif("Actualizando estado...", "loading");
+    try {
+      const token = await getCsrfToken();
+      const res = await fetch(`/admin/solicitudes/vehiculos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ estado }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        mostrarNotif(data.error || "Error al actualizar estado", "error");
+        return;
+      }
+      mostrarNotif(`Cotización ${id} actualizada a ${estado}`, "success");
+      cargarSolicitudesVehiculos(); // refrescar tabla
+    } catch (err) {
+      console.error("Error al actualizar estado:", err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  });
+}
+document.addEventListener("click", async (e) => {
+  const btn = (e.target as HTMLElement).closest("button");
+  if (!btn) return;
+
+  // --- Enviar correo ---
+  if (btn.dataset.tipo === "enviar-correo") {
+    e.preventDefault();
+
+    const id = (
+      document.querySelector("input[name='cotizacion_id']") as HTMLInputElement
+    ).value;
+    const factura = (
+      document.querySelector(
+        "input[name='cotizacion_factura']"
+      ) as HTMLInputElement
+    ).value;
+    const estado = (
+      document.querySelector(
+        "select[name='cotizacion_estado']"
+      ) as HTMLSelectElement
+    ).value;
+
+    if (!id) {
+      mostrarNotif("No se encontró la cotización seleccionada", "error");
+      return;
+    }
+
+    mostrarNotif("Enviando correo...", "loading");
+    try {
+      const token = await getCsrfToken();
+      const res = await fetch(`/admin/solicitudes/vehiculos/${id}/correo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "CSRF-Token": token,
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ estado, numero_factura: factura }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        mostrarNotif(data.error || "Error al enviar correo", "error");
+        return;
+      }
+      mostrarNotif(
+        `Correo enviado para factura ${factura} (${estado})`,
+        "success"
+      );
+    } catch (err) {
+      console.error("Error al enviar correo:", err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  }
+});
+document.addEventListener("click", async (e) => {
+  const btn = (e.target as HTMLElement).closest("button");
+  if (!btn) return;
+
+  if (btn.dataset.tipo === "logout") {
+    e.preventDefault();
+    try {
+      const token = await getCsrfToken();
+      const res = await fetch("/admin/logout", {
+        method: "POST",
+        headers: {
+          "CSRF-Token": token,
+        },
+        credentials: "same-origin",
+      });
+      const data = await res.json();
+      if (res.ok) {
+        mostrarNotif("Sesión cerrada correctamente", "success");
+        window.location.href = "/admin/adlog1n";
+      } else {
+        mostrarNotif(data.error || "Error al cerrar sesión", "error");
+      }
+    } catch (err) {
+      console.error("Error en logout:", err);
+      mostrarNotif("Error de conexión", "error");
+    }
+  }
+});
 // Vistas de panel admin
 
 function showSection(key: string): void {
@@ -1689,6 +2060,15 @@ function showSection(key: string): void {
     cargarDepartamentosClientes("mod_jur_departamento", "mod_jur_municipio");
     initModificarClienteNatural();
     initModificarClienteJuridico();
+  }
+  if (key === "vehiculos") {
+    cargarVehiculos();
+    cargarSelectVehiculos();
+    initModificarVehiculo();
+  }
+  if (key === "sol-vehiculos") {
+    cargarSolicitudesVehiculos();
+    initGestionarCotizacionVehiculo();
   }
 }
 function initPanelNavigation(): void {

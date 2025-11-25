@@ -665,10 +665,11 @@ header .menu-toggle.current {
   margin-bottom: 15px;
 }
 .readonly-input {
-  background-color: #d1d1d1 !important;
-  color: #555;
+  background-color: #e0e0e0 !important;
+  color: #004080;                      
   font-weight: bold;
   cursor: not-allowed;
+  border: 1px solid #ccc;
 }
 .highlight-total {
   background-color: #dff0d8 !important;
@@ -1462,6 +1463,28 @@ footer section {
   margin: 0;
   padding-left: 30px;
   padding-right: 30px;
+}
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: none;            
+  border: none;               
+  color: #ff7f7f;              
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.logout-btn i {
+  font-size: 1.2rem;           
+}
+.logout-btn:hover {
+  color: #6cc24a;              
+  transform: translateX(3px);  
 }
 .login-body {
   background-color: #0f0f0f;

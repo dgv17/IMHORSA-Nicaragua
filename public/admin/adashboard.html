@@ -113,9 +113,9 @@
         </nav>
 
         <div class="sidebar-footer">
-          <a href="/admin/adlog1n" class="logout-btn"
-            ><i class="bx bx-log-out"></i> Logout</a
-          >
+          <button class="logout-btn" data-tipo="logout">
+            <i class="bx bx-log-out"></i> Logout
+          </button>
         </div>
       </aside>
 
@@ -138,7 +138,8 @@
                   <i class="bx bxs-user-plus"></i> Nuevo Cliente
                 </button>
                 <button class="action-btn" data-nav="vehiculos">
-                  <i class="bx bxs-car-mechanic"></i> Registrar Vehículo
+                  <i class="bx bxs-car-mechanic"></i> Cambiar Stock de un
+                  Vehiculo
                 </button>
                 <button class="action-btn" data-nav="sol-vehiculos">
                   <i class="bx bxs-file-plus"></i> Ver Solicitudes
@@ -422,9 +423,63 @@
               </div>
             </details>
           </div>
-          <!-- Secciones adicionales -->
-          <div id="section-vehiculos" class="content-section hidden">
-            <div class="card-dark"><h2>Inventario de Vehículos</h2></div>
+          <div
+            id="section-vehiculos"
+            class="content-section hidden expand-content"
+          >
+            <h2 class="page-title">Vehículos en Inventario</h2>
+
+            <!-- Tabla de Vehículos -->
+            <div class="card-dark table-responsive">
+              <table class="maintenance-table">
+                <thead>
+                  <tr>
+                    <th>Modelo</th>
+                    <th>Año</th>
+                    <th>Serie</th>
+                    <th>Marca</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-vehiculos"></tbody>
+              </table>
+            </div>
+
+            <!-- Actualizar Stock de Vehículo -->
+            <details
+              id="modificar-vehiculo"
+              class="card-dark"
+              style="margin-top: 30px"
+            >
+              <summary>
+                <strong>✏️ Actualizar Stock de Vehículo</strong>
+              </summary>
+              <div class="form-wrapper" style="margin-top: 20px">
+                <input type="hidden" name="mod_veh_id" />
+
+                <div class="form-group">
+                  <label>Vehículo</label>
+                  <select name="mod_vehiculo"></select>
+                </div>
+
+                <div class="form-group">
+                  <label>Stock</label>
+                  <select name="mod_stock">
+                    <option value="1">Hay stock</option>
+                    <option value="0">No hay stock</option>
+                  </select>
+                </div>
+
+                <div class="submit-container">
+                  <input type="hidden" name="_csrf" />
+                  <button class="cotizar-btn full-width" data-tipo="vehiculo">
+                    Actualizar Stock
+                  </button>
+                </div>
+              </div>
+            </details>
           </div>
           <div id="section-accesorios" class="content-section hidden">
             <div class="card-dark"><h2>Inventario de Accesorios</h2></div>
@@ -435,8 +490,71 @@
           <div id="section-series" class="content-section hidden">
             <div class="card-dark"><h2>Series de Producción</h2></div>
           </div>
-          <div id="section-sol-vehiculos" class="content-section hidden">
-            <div class="card-dark"><h2>Solicitudes de Vehículos</h2></div>
+          <div
+            id="section-sol-vehiculos"
+            class="content-section hidden expand-content"
+          >
+            <h2 class="page-title">Solicitudes de Vehículos</h2>
+
+            <!-- Tabla de Cotizaciones de Vehículos -->
+            <div class="card-dark table-responsive">
+              <table class="maintenance-table">
+                <thead>
+                  <tr>
+                    <th>Número de Factura</th>
+                    <th>Cliente</th>
+                    <th>Fecha de Solicitud</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-cotizaciones-vehiculos">
+                  <!-- Se llenará dinámicamente con cotizaciones tipo "vehiculo" -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Gestionar Cotizaciones -->
+            <details
+              id="gestionar-cotizacion-vehiculo"
+              class="card-dark"
+              style="margin-top: 30px"
+            >
+              <summary><strong>⚙️ Gestionar Cotizaciones</strong></summary>
+              <div class="form-wrapper" style="margin-top: 20px">
+                <input type="hidden" name="cotizacion_id" />
+                <div class="form-group">
+                  <label>Número de Factura</label>
+                  <input type="text" name="cotizacion_factura" required />
+                </div>
+                <div class="form-group">
+                  <label>Estado</label>
+                  <select name="cotizacion_estado" required>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Aceptada">Aceptada</option>
+                    <option value="Denegada">Denegada</option>
+                  </select>
+                </div>
+                <div class="submit-container">
+                  <input type="hidden" name="_csrf" />
+                  <button
+                    class="cotizar-btn full-width"
+                    data-tipo="cotizacion-vehiculo"
+                  >
+                    Actualizar Estado
+                  </button>
+                </div>
+                <div class="submit-container" style="margin-top: 10px">
+                  <button
+                    class="cotizar-btn full-width"
+                    data-tipo="enviar-correo"
+                  >
+                    Enviar Correo
+                  </button>
+                </div>
+              </div>
+              >
+            </details>
           </div>
           <div id="section-mantenimiento" class="content-section hidden">
             <div class="card-dark"><h2>Solicitudes de Mantenimiento</h2></div>

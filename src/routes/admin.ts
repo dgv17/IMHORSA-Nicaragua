@@ -14,7 +14,12 @@ import {
   getClientesNaturales,
   getClientesJuridicos,
   updateClienteNatural, 
-  updateClienteJuridico 
+  updateClienteJuridico,
+  getVehiculos,
+  updateVehiculoStock,
+  getSolicitudesVehiculos,
+  updateCotizacionVehiculo,
+  enviarCorreoCotizacionVehiculo
 } from "../controllers/adminController";
 import { requireAuth, requireAdmin, requireAdminOrGerenteGeneral } from "../middleware/auth";
 
@@ -69,5 +74,20 @@ router.get("/clientes/naturales", requireAuth, getClientesNaturales);
 router.get("/clientes/juridicos", requireAuth, getClientesJuridicos);
 router.put("/clientes/naturales/:id", requireAdminOrGerenteGeneral, updateClienteNatural);
 router.put("/clientes/juridicos/:id", requireAdminOrGerenteGeneral, updateClienteJuridico);
+router.get("/vehiculos", requireAuth, getVehiculos);
+router.put("/vehiculos/:id", requireAdminOrGerenteGeneral, updateVehiculoStock);
+router.get("/solicitudes/vehiculos", requireAuth, getSolicitudesVehiculos);
+router.put("/solicitudes/vehiculos/:id", requireAdminOrGerenteGeneral, updateCotizacionVehiculo);
+router.post("/solicitudes/vehiculos/:id/correo", requireAdminOrGerenteGeneral, enviarCorreoCotizacionVehiculo);
 
+router.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error al cerrar sesión:", err);
+      return res.status(500).json({ error: "Error al cerrar sesión" });
+    }
+    res.clearCookie("connect.sid");
+    res.json({ success: true });
+  });
+});
 export default router;
