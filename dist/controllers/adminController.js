@@ -8,6 +8,8 @@ exports.logout = logout;
 exports.restoreRequest = restoreRequest;
 exports.restoreForm = restoreForm;
 exports.restorePassword = restorePassword;
+exports.getUsuarios = getUsuarios;
+exports.getRoles = getRoles;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -114,6 +116,33 @@ async function restorePassword(req, res) {
     catch (error) {
         console.error("Error en restorePassword:", error);
         return res.status(500).send("Error interno del servidor");
+    }
+}
+// Obtener lista de usuarios
+async function getUsuarios(req, res) {
+    try {
+        const [rows] = await db_1.pool.query(`
+      SELECT u.id, u.username, u.nombre, u.correo, r.nombre AS rol
+      FROM usuarios u
+      JOIN roles r ON u.rol_id = r.id
+      ORDER BY u.id ASC
+    `);
+        res.json(rows);
+    }
+    catch (err) {
+        console.error("Error al obtener usuarios:", err);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+// Obtener lista de roles
+async function getRoles(req, res) {
+    try {
+        const [rows] = await db_1.pool.query("SELECT id, nombre FROM roles ORDER BY id ASC");
+        res.json(rows);
+    }
+    catch (err) {
+        console.error("Error al obtener roles:", err);
+        res.status(500).json({ error: "Error interno del servidor" });
     }
 }
 //# sourceMappingURL=adminController.js.map

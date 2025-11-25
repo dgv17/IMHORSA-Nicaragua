@@ -396,6 +396,36 @@ function validarProblemaFront(problema: string): string | null {
   }
   return null;
 }
+function validarUsernameFront(username: string): string | null {
+  const trimmed = username.trim();
+  if (trimmed.length < 3) return "El username es demasiado corto";
+  if (trimmed.length > 25) return "El username no puede superar 25 caracteres";
+  return null;
+}
+function validarNombreUsuarioFront(nombre: string): string | null {
+  const trimmed = nombre.trim();
+  if (trimmed.length < 3) return "El nombre es demasiado corto";
+  if (trimmed.length > 25) return "El nombre no puede superar 25 caracteres";
+  return null;
+}
+function validarCorreoUsuarioFront(correo: string): string | null {
+  const trimmed = correo.trim();
+  if (trimmed.length < 3) return "El correo es demasiado corto";
+  if (trimmed.length > 50) return "El correo no puede superar 50 caracteres";
+  return null;
+}
+function validarPasswordFront(pass: string): string | null {
+  if (pass.length < 6) return "La contraseña debe tener al menos 6 caracteres";
+  return null;
+}
+function validarCorreo(correo: string): string | null {
+  const trimmed = correo.trim();
+  if (trimmed.length < 3) return "El correo es demasiado corto";
+  if (trimmed.length > 50) return "El correo no puede superar 50 caracteres";
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!regex.test(trimmed)) return "Formato de correo inválido";
+  return null;
+}
 function initEventoFormDates(): void {
   const today = new Date();
   const yyyy = today.getFullYear();
@@ -881,7 +911,7 @@ function initSidebarToggle(): void {
       }
     }
   };
-  let isHidden = isMobile(); 
+  let isHidden = isMobile();
   applyState(isHidden);
   toggleBtn.addEventListener("click", () => {
     isHidden = !isHidden;
@@ -890,13 +920,100 @@ function initSidebarToggle(): void {
   window.addEventListener("resize", () => {
     const mobileNow = isMobile();
     if (mobileNow) {
-        isHidden = true;
+      isHidden = true;
     } else {
-        isHidden = false;
+      isHidden = false;
     }
     applyState(isHidden);
   });
 }
+// Vistas de panel admin
+// usuarios
+async function cargarUsuarios(): Promise<void> {
+  try {
+    const res = await fetch("/admin/usuarios", { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Error al cargar usuarios");
+    const usuarios = await res.json();
+    const tbody = document.querySelector("#section-usuarios tbody");
+    if (!tbody) return;
+    tbody.innerHTML = ""; // Limpiar tabla
+    usuarios.forEach((u: any) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+    <td>${u.username}</td>
+    <td>${u.nombre || "-"}</td>
+    <td>${u.correo || "-"}</td>
+    <td>${u.rol}</td>
+    <td>
+        <button 
+          class="cotizar-btn edit-btn"
+          data-id="${u.id}"
+          data-username="${u.username}"
+          data-nombre="${u.nombre || ""}"
+          data-correo="${u.correo || ""}"
+          data-rol="${u.rol}">
+          Editar
+        </button>
+      </td>
+    `;
+      tbody.appendChild(tr);
+    });
+    document.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const details = document.getElementById(
+          "modificar-usuario"
+        ) as HTMLDetailsElement;
+        if (details) {
+          details.open = true;
+          details.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        const usernameInput = document.querySelector(
+          "input[name='mod_username']"
+        ) as HTMLInputElement;
+        const nombreInput = document.querySelector(
+          "input[name='mod_nombre']"
+        ) as HTMLInputElement;
+        const correoInput = document.querySelector(
+          "input[name='mod_correo']"
+        ) as HTMLInputElement;
+        const rolSelect = document.querySelector(
+          "select[name='mod_rol']"
+        ) as HTMLSelectElement;
+        if (usernameInput) usernameInput.value = target.dataset.username || "";
+        if (nombreInput) nombreInput.value = target.dataset.nombre || "";
+        if (correoInput) correoInput.value = target.dataset.correo || "";
+        if (rolSelect) rolSelect.value = target.dataset.rol || "";
+      });
+    });
+  } catch (err) {
+    console.error("Error al mostrar usuarios:", err);
+  }
+}
+async function cargarRoles(): Promise<void> {
+  try {
+    const res = await fetch("/admin/roles", { credentials: "same-origin" });
+    if (!res.ok) throw new Error("Error al cargar roles");
+    const roles = await res.json();
+    const selects = [
+      document.querySelector("select[name='rol']") as HTMLSelectElement,
+      document.querySelector("select[name='mod_rol']") as HTMLSelectElement,
+    ];
+    selects.forEach((select) => {
+      if (!select) return;
+      select.innerHTML = "";
+      roles.forEach((r: any) => {
+        const option = document.createElement("option");
+        option.value = r.id;
+        option.textContent = r.nombre;
+        select.appendChild(option);
+      });
+    });
+  } catch (err) {
+    console.error("Error al mostrar roles:", err);
+  }
+}
+// Vistas de panel admin
 
 function showSection(key: string): void {
   document.querySelectorAll(".content-section").forEach((section) => {
@@ -906,6 +1023,10 @@ function showSection(key: string): void {
   if (target) target.classList.remove("hidden");
   setActiveNav(key);
   updateHeader(key);
+  if (key === "usuarios") {
+    cargarUsuarios();
+    cargarRoles();
+  }
 }
 function initPanelNavigation(): void {
   const toggleBtn = document.querySelector(".toggle-sidebar") as HTMLElement;
@@ -926,6 +1047,27 @@ function initPanelNavigation(): void {
   });
   showSection("home");
 }
+
+function initHomeActions(): void {
+  document.querySelectorAll("#section-home .action-btn").forEach((btn) => {
+    const key = btn.getAttribute("data-nav");
+    if (!key) return;
+    btn.addEventListener("click", () => {
+      showSection(key);
+      const sidebar = document.querySelector(".sidebar");
+      const toggleBtn = document.querySelector(".toggle-sidebar");
+      if (
+        window.matchMedia("(max-width: 768px)").matches &&
+        sidebar &&
+        toggleBtn
+      ) {
+        sidebar.classList.remove("active");
+        toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+      }
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   initLogin();
   initCorreoRestore();
@@ -938,9 +1080,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     hideUsuariosIfNotAdmin(rol);
     initPanelNavigation();
     initSidebarToggle();
+    initHomeActions();
   }
 });
-
 document.addEventListener("DOMContentLoaded", async () => {
   const token = await getCsrfToken();
   document.querySelectorAll("input[name='_csrf']").forEach((input) => {

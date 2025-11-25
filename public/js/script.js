@@ -350,6 +350,46 @@ function validarProblemaFront(problema) {
     }
     return null;
 }
+function validarUsernameFront(username) {
+    const trimmed = username.trim();
+    if (trimmed.length < 3)
+        return "El username es demasiado corto";
+    if (trimmed.length > 25)
+        return "El username no puede superar 25 caracteres";
+    return null;
+}
+function validarNombreUsuarioFront(nombre) {
+    const trimmed = nombre.trim();
+    if (trimmed.length < 3)
+        return "El nombre es demasiado corto";
+    if (trimmed.length > 25)
+        return "El nombre no puede superar 25 caracteres";
+    return null;
+}
+function validarCorreoUsuarioFront(correo) {
+    const trimmed = correo.trim();
+    if (trimmed.length < 3)
+        return "El correo es demasiado corto";
+    if (trimmed.length > 50)
+        return "El correo no puede superar 50 caracteres";
+    return null;
+}
+function validarPasswordFront(pass) {
+    if (pass.length < 6)
+        return "La contraseña debe tener al menos 6 caracteres";
+    return null;
+}
+function validarCorreo(correo) {
+    const trimmed = correo.trim();
+    if (trimmed.length < 3)
+        return "El correo es demasiado corto";
+    if (trimmed.length > 50)
+        return "El correo no puede superar 50 caracteres";
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!regex.test(trimmed))
+        return "Formato de correo inválido";
+    return null;
+}
 function initEventoFormDates() {
     const today = new Date();
     const yyyy = today.getFullYear();
@@ -842,6 +882,97 @@ function initSidebarToggle() {
         applyState(isHidden);
     });
 }
+// Vistas de panel admin
+// usuarios
+function cargarUsuarios() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const res = yield fetch("/admin/usuarios", { credentials: "same-origin" });
+            if (!res.ok)
+                throw new Error("Error al cargar usuarios");
+            const usuarios = yield res.json();
+            const tbody = document.querySelector("#section-usuarios tbody");
+            if (!tbody)
+                return;
+            tbody.innerHTML = ""; // Limpiar tabla
+            usuarios.forEach((u) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+    <td>${u.username}</td>
+    <td>${u.nombre || "-"}</td>
+    <td>${u.correo || "-"}</td>
+    <td>${u.rol}</td>
+    <td>
+        <button 
+          class="cotizar-btn edit-btn"
+          data-id="${u.id}"
+          data-username="${u.username}"
+          data-nombre="${u.nombre || ""}"
+          data-correo="${u.correo || ""}"
+          data-rol="${u.rol}">
+          Editar
+        </button>
+      </td>
+    `;
+                tbody.appendChild(tr);
+            });
+            document.querySelectorAll(".edit-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const target = e.currentTarget;
+                    const details = document.getElementById("modificar-usuario");
+                    if (details) {
+                        details.open = true;
+                        details.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                    const usernameInput = document.querySelector("input[name='mod_username']");
+                    const nombreInput = document.querySelector("input[name='mod_nombre']");
+                    const correoInput = document.querySelector("input[name='mod_correo']");
+                    const rolSelect = document.querySelector("select[name='mod_rol']");
+                    if (usernameInput)
+                        usernameInput.value = target.dataset.username || "";
+                    if (nombreInput)
+                        nombreInput.value = target.dataset.nombre || "";
+                    if (correoInput)
+                        correoInput.value = target.dataset.correo || "";
+                    if (rolSelect)
+                        rolSelect.value = target.dataset.rol || "";
+                });
+            });
+        }
+        catch (err) {
+            console.error("Error al mostrar usuarios:", err);
+        }
+    });
+}
+function cargarRoles() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const res = yield fetch("/admin/roles", { credentials: "same-origin" });
+            if (!res.ok)
+                throw new Error("Error al cargar roles");
+            const roles = yield res.json();
+            const selects = [
+                document.querySelector("select[name='rol']"),
+                document.querySelector("select[name='mod_rol']"),
+            ];
+            selects.forEach((select) => {
+                if (!select)
+                    return;
+                select.innerHTML = "";
+                roles.forEach((r) => {
+                    const option = document.createElement("option");
+                    option.value = r.id;
+                    option.textContent = r.nombre;
+                    select.appendChild(option);
+                });
+            });
+        }
+        catch (err) {
+            console.error("Error al mostrar roles:", err);
+        }
+    });
+}
+// Vistas de panel admin
 function showSection(key) {
     document.querySelectorAll(".content-section").forEach((section) => {
         section.classList.add("hidden");
@@ -851,6 +982,10 @@ function showSection(key) {
         target.classList.remove("hidden");
     setActiveNav(key);
     updateHeader(key);
+    if (key === "usuarios") {
+        cargarUsuarios();
+        cargarRoles();
+    }
 }
 function initPanelNavigation() {
     const toggleBtn = document.querySelector(".toggle-sidebar");
@@ -871,6 +1006,24 @@ function initPanelNavigation() {
     });
     showSection("home");
 }
+function initHomeActions() {
+    document.querySelectorAll("#section-home .action-btn").forEach((btn) => {
+        const key = btn.getAttribute("data-nav");
+        if (!key)
+            return;
+        btn.addEventListener("click", () => {
+            showSection(key);
+            const sidebar = document.querySelector(".sidebar");
+            const toggleBtn = document.querySelector(".toggle-sidebar");
+            if (window.matchMedia("(max-width: 768px)").matches &&
+                sidebar &&
+                toggleBtn) {
+                sidebar.classList.remove("active");
+                toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+            }
+        });
+    });
+}
 document.addEventListener("DOMContentLoaded", () => {
     initLogin();
     initCorreoRestore();
@@ -883,6 +1036,7 @@ document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, vo
         hideUsuariosIfNotAdmin(rol);
         initPanelNavigation();
         initSidebarToggle();
+        initHomeActions();
     }
 }));
 document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {

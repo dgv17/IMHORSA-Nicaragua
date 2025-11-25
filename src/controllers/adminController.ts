@@ -129,3 +129,28 @@ export async function restorePassword(req: Request, res: Response) {
     return res.status(500).send("Error interno del servidor");
   }
 }
+// Obtener lista de usuarios
+export async function getUsuarios(req: Request, res: Response) {
+  try {
+    const [rows] = await pool.query(`
+      SELECT u.id, u.username, u.nombre, u.correo, r.nombre AS rol
+      FROM usuarios u
+      JOIN roles r ON u.rol_id = r.id
+      ORDER BY u.id ASC
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error al obtener usuarios:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+// Obtener lista de roles
+export async function getRoles(req: Request, res: Response) {
+  try {
+    const [rows] = await pool.query("SELECT id, nombre FROM roles ORDER BY id ASC");
+    res.json(rows);
+  } catch (err) {
+    console.error("Error al obtener roles:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}

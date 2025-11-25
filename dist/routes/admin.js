@@ -13,12 +13,12 @@ router.get("/adlog1n", (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "logadm.html"));
 });
 router.post("/login", adminController_1.login);
-// Dashboard protegido (todos los roles autenticados)
+// Dashboard protegido
 router.get("/admondashb0ard", auth_1.requireAuth, (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "adashboard.html"));
 });
-// Ejemplo: sección Usuarios (solo admin)
-router.get("/usuarios", auth_1.requireAdmin, (req, res) => {
+// Vista Usuarios (solo admin)
+router.get("/usuarios/vista", auth_1.requireAdmin, (req, res) => {
     res.sendFile(path_1.default.join(process.cwd(), "public", "admin", "usuarios.html"));
 });
 // Logout
@@ -41,5 +41,8 @@ router.get("/me", auth_1.requireAuth, (req, res) => {
         rol: user.rol,
     });
 });
+// API Usuarios y Roles
+router.get("/usuarios", auth_1.requireAuth, adminController_1.getUsuarios);
+router.get("/roles", auth_1.requireAuth, adminController_1.getRoles);
 exports.default = router;
 //# sourceMappingURL=admin.js.map
