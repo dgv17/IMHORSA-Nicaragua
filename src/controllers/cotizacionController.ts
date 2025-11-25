@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../models/db";
+import  pool  from "../models/db";
 import {
   crearCotizacionVehiculo
 } from "../models/cotizacionModel";

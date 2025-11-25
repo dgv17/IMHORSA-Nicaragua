@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../models/db";
+import  pool  from "../models/db";
 import { crearCotizacionEvento } from "../models/eventoModel";
 import nodemailer from "nodemailer";
 import axios from "axios";

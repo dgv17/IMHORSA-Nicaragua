@@ -1,4 +1,4 @@
-import { pool } from "./db";
+import  pool  from "./db";
 import { dividirNombreCompleto } from "../utils/validaciones";
 
 export async function crearCotizacionVehiculo(data: any) {

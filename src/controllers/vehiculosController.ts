@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../models/db";
+import pool  from "../models/db";
 
 export const getVehiculos = async (req: Request, res: Response) => {
   const serie = req.query.serie as string | undefined;

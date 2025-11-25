@@ -1,4 +1,4 @@
-import { pool } from "./db";
+import pool  from "./db";
 import { dividirNombreCompleto } from "../utils/validaciones";
 import type { ResultSetHeader } from "mysql2";
 

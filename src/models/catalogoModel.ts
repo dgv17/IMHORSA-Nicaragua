@@ -1,4 +1,4 @@
-import { pool } from "./db";
+import  pool  from "./db";
 
 export async function getDepartamentos() {
   const [rows] = await pool.query("SELECT id, nombre FROM departamentos");
