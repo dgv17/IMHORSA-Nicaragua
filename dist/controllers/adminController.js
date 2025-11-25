@@ -77,7 +77,7 @@ async function restoreRequest(req, res) {
                 pass: process.env.EMAIL_PASS,
             },
         });
-        const link = `http://localhost:3000/admin/restore/${token}`;
+        const link = `https://imhorsa.vercel.app/admin/restore/${token}`;
         await transporter.sendMail({
             from: process.env.EMAIL_USER,
             to: user.correo,
