@@ -1115,6 +1115,83 @@ function initModificarUsuario(): void {
     }
   });
 }
+function initPasswordManagement(): void {
+  // --- Enviar correo de restablecimiento ---
+  const correoInput = document.querySelector("input[name='reset_correo']") as HTMLInputElement;
+  const btnCorreo = correoInput?.closest(".form-wrapper")?.querySelector("button");
+  if (correoInput && btnCorreo) {
+    btnCorreo.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const correo = correoInput.value.trim();
+      const error = validarCorreo(correo);
+      if (error) return mostrarNotif(error, "error");
+      mostrarNotif("Enviando correo...", "loading");
+      try {
+        const token = await getCsrfToken();
+        const res = await fetch("/admin/restore-request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "CSRF-Token": token,
+          },
+          body: JSON.stringify({ correores: correo }),
+        });
+        const text = await res.text();
+        if (res.ok) {
+          mostrarNotif("Correo enviado, revise su bandeja", "success");
+        } else {
+          mostrarNotif(text || "Error al enviar correo", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        mostrarNotif("Error de conexión", "error");
+      }
+    });
+  }
+  // --- Forzar cambio de contraseña ---
+  const usuarioInput = document.querySelector("input[name='force_usuario']") as HTMLInputElement;
+  const nuevaInput = document.querySelector("input[name='force_nueva']") as HTMLInputElement;
+  const confirmarInput = document.querySelector("input[name='force_confirmar']") as HTMLInputElement;
+  const btnForce = confirmarInput?.closest(".form-wrapper")?.querySelector("button");
+
+  if (usuarioInput && nuevaInput && confirmarInput && btnForce) {
+    btnForce.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const usuario = usuarioInput.value.trim();
+      const nueva = nuevaInput.value.trim();
+      const confirmar = confirmarInput.value.trim();
+      const errores: string[] = [];
+      if (!usuario) errores.push("Debe ingresar el usuario");
+      if (nueva.length < 6) errores.push("La nueva contraseña debe tener al menos 6 caracteres");
+      if (nueva !== confirmar) errores.push("Las contraseñas no coinciden");
+      if (errores.length > 0) {
+        errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+        return;
+      }
+      mostrarNotif("Actualizando contraseña...", "loading");
+      try {
+        const token = await getCsrfToken();
+        const res = await fetch("/admin/force-password", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "CSRF-Token": token,
+          },
+          body: JSON.stringify({ username: usuario, newPassword: nueva }),
+        });
+        const text = await res.text();
+        if (res.ok) {
+          mostrarNotif("Contraseña actualizada correctamente", "success");
+        } else {
+          mostrarNotif(text || "Error al actualizar", "error");
+        }
+      } catch (err) {
+        console.error(err);
+        mostrarNotif("Error de conexión", "error");
+      }
+    });
+  }
+}
 
 // Vistas de panel admin
 
@@ -1130,6 +1207,7 @@ function showSection(key: string): void {
     cargarUsuarios();
     cargarRoles();
     initModificarUsuario();
+    initPasswordManagement();
   }
 }
 function initPanelNavigation(): void {

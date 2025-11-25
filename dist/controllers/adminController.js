@@ -12,6 +12,7 @@ exports.getUsuarios = getUsuarios;
 exports.getRoles = getRoles;
 exports.createUsuario = createUsuario;
 exports.updateUsuario = updateUsuario;
+exports.forcePasswordChange = forcePasswordChange;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -204,6 +205,35 @@ async function updateUsuario(req, res) {
         if (err.code === "ER_DUP_ENTRY") {
             return res.status(400).json({ errores: ["El username o correo ya están registrados"] });
         }
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+async function forcePasswordChange(req, res) {
+    const { username, newPassword } = req.body;
+    const errores = [];
+    if (!username || username.trim().length < 3 || username.trim().length > 25)
+        errores.push("El username debe tener entre 3 y 25 caracteres");
+    if (!newPassword || newPassword.length < 6)
+        errores.push("La nueva contraseña debe tener al menos 6 caracteres");
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+    try {
+        const [rows] = await db_1.pool.query("SELECT id FROM usuarios WHERE username = ?", [username.trim()]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+        const userId = rows[0].id;
+        const bcryptHash = await bcrypt_1.default.hash(newPassword, 12);
+        const luciferCipher = (0, lucifer_1.encryptLuciferBlocks)(bcryptHash, process.env.LUCIFER_KEY);
+        await db_1.pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+            luciferCipher,
+            userId,
+        ]);
+        res.json({ success: true });
+    }
+    catch (error) {
+        console.error("Error al forzar cambio de contraseña:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 }

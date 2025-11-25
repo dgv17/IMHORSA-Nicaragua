@@ -219,3 +219,36 @@ export async function updateUsuario(req: Request, res: Response) {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
+
+export async function forcePasswordChange(req: Request, res: Response) {
+  const { username, newPassword } = req.body;
+  const errores: string[] = [];
+  if (!username || username.trim().length < 3 || username.trim().length > 25)
+    errores.push("El username debe tener entre 3 y 25 caracteres");
+  if (!newPassword || newPassword.length < 6)
+    errores.push("La nueva contraseña debe tener al menos 6 caracteres");
+  if (errores.length > 0) {
+    return res.status(400).json({ errores });
+  }
+  try {
+    const [rows]: any = await pool.query(
+      "SELECT id FROM usuarios WHERE username = ?",
+      [username.trim()]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+    const userId = rows[0].id;
+    const bcryptHash = await bcrypt.hash(newPassword, 12);
+    const luciferCipher = encryptLuciferBlocks(bcryptHash, process.env.LUCIFER_KEY!);
+    await pool.query("UPDATE usuarios SET password_user = ? WHERE id = ?", [
+      luciferCipher,
+      userId,
+    ]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error al forzar cambio de contraseña:", error);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+}
+

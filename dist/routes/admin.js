@@ -46,5 +46,6 @@ router.get("/usuarios", auth_1.requireAuth, adminController_1.getUsuarios);
 router.get("/roles", auth_1.requireAuth, adminController_1.getRoles);
 router.post("/usuarios", auth_1.requireAdmin, adminController_1.createUsuario);
 router.put("/usuarios/:id", auth_1.requireAdmin, adminController_1.updateUsuario);
+router.put("/force-password", auth_1.requireAdmin, adminController_1.forcePasswordChange);
 exports.default = router;
 //# sourceMappingURL=admin.js.map

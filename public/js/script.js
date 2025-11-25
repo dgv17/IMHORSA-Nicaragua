@@ -1104,6 +1104,91 @@ function initModificarUsuario() {
         }
     }));
 }
+function initPasswordManagement() {
+    var _a, _b;
+    // --- Enviar correo de restablecimiento ---
+    const correoInput = document.querySelector("input[name='reset_correo']");
+    const btnCorreo = (_a = correoInput === null || correoInput === void 0 ? void 0 : correoInput.closest(".form-wrapper")) === null || _a === void 0 ? void 0 : _a.querySelector("button");
+    if (correoInput && btnCorreo) {
+        btnCorreo.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+            e.preventDefault();
+            const correo = correoInput.value.trim();
+            const error = validarCorreo(correo);
+            if (error)
+                return mostrarNotif(error, "error");
+            mostrarNotif("Enviando correo...", "loading");
+            try {
+                const token = yield getCsrfToken();
+                const res = yield fetch("/admin/restore-request", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token,
+                    },
+                    body: JSON.stringify({ correores: correo }),
+                });
+                const text = yield res.text();
+                if (res.ok) {
+                    mostrarNotif("Correo enviado, revise su bandeja", "success");
+                }
+                else {
+                    mostrarNotif(text || "Error al enviar correo", "error");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
+            }
+        }));
+    }
+    // --- Forzar cambio de contraseña ---
+    const usuarioInput = document.querySelector("input[name='force_usuario']");
+    const nuevaInput = document.querySelector("input[name='force_nueva']");
+    const confirmarInput = document.querySelector("input[name='force_confirmar']");
+    const btnForce = (_b = confirmarInput === null || confirmarInput === void 0 ? void 0 : confirmarInput.closest(".form-wrapper")) === null || _b === void 0 ? void 0 : _b.querySelector("button");
+    if (usuarioInput && nuevaInput && confirmarInput && btnForce) {
+        btnForce.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+            e.preventDefault();
+            const usuario = usuarioInput.value.trim();
+            const nueva = nuevaInput.value.trim();
+            const confirmar = confirmarInput.value.trim();
+            const errores = [];
+            if (!usuario)
+                errores.push("Debe ingresar el usuario");
+            if (nueva.length < 6)
+                errores.push("La nueva contraseña debe tener al menos 6 caracteres");
+            if (nueva !== confirmar)
+                errores.push("Las contraseñas no coinciden");
+            if (errores.length > 0) {
+                errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+                return;
+            }
+            mostrarNotif("Actualizando contraseña...", "loading");
+            try {
+                const token = yield getCsrfToken();
+                const res = yield fetch("/admin/force-password", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "CSRF-Token": token,
+                    },
+                    body: JSON.stringify({ username: usuario, newPassword: nueva }),
+                });
+                const text = yield res.text();
+                if (res.ok) {
+                    mostrarNotif("Contraseña actualizada correctamente", "success");
+                }
+                else {
+                    mostrarNotif(text || "Error al actualizar", "error");
+                }
+            }
+            catch (err) {
+                console.error(err);
+                mostrarNotif("Error de conexión", "error");
+            }
+        }));
+    }
+}
 // Vistas de panel admin
 function showSection(key) {
     document.querySelectorAll(".content-section").forEach((section) => {
@@ -1118,6 +1203,7 @@ function showSection(key) {
         cargarUsuarios();
         cargarRoles();
         initModificarUsuario();
+        initPasswordManagement();
     }
 }
 function initPanelNavigation() {

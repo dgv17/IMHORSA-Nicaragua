@@ -2,7 +2,7 @@ import { Router } from "express";
 import path from "path";
 import { 
   login, logout, restoreRequest, restoreForm, restorePassword,
-  getUsuarios, getRoles, createUsuario, updateUsuario
+  getUsuarios, getRoles, createUsuario, updateUsuario, forcePasswordChange
 } from "../controllers/adminController";
 import { requireAuth, requireAdmin } from "../middleware/auth";
 
@@ -50,5 +50,6 @@ router.get("/usuarios", requireAuth, getUsuarios);
 router.get("/roles", requireAuth, getRoles);
 router.post("/usuarios", requireAdmin, createUsuario);
 router.put("/usuarios/:id", requireAdmin, updateUsuario);
+router.put("/force-password", requireAdmin, forcePasswordChange);
 
 export default router;
