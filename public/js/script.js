@@ -853,6 +853,8 @@ function showSection(key) {
     updateHeader(key);
 }
 function initPanelNavigation() {
+    const toggleBtn = document.querySelector(".toggle-sidebar");
+    const sidebar = document.querySelector(".sidebar");
     document.querySelectorAll(".sidebar-nav a").forEach((a) => {
         const key = a.getAttribute("data-nav");
         if (!key)
@@ -860,6 +862,11 @@ function initPanelNavigation() {
         a.addEventListener("click", (e) => {
             e.preventDefault();
             showSection(key);
+            // Si está en mobile, cerrar el sidebar
+            if (window.matchMedia("(max-width: 768px)").matches) {
+                sidebar.classList.remove("active");
+                toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+            }
         });
     });
     showSection("home");

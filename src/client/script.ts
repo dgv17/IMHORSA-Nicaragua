@@ -908,17 +908,24 @@ function showSection(key: string): void {
   updateHeader(key);
 }
 function initPanelNavigation(): void {
+  const toggleBtn = document.querySelector(".toggle-sidebar") as HTMLElement;
+  const sidebar = document.querySelector(".sidebar") as HTMLElement;
+
   document.querySelectorAll(".sidebar-nav a").forEach((a) => {
     const key = a.getAttribute("data-nav");
     if (!key) return;
     a.addEventListener("click", (e) => {
       e.preventDefault();
       showSection(key);
+      // Si está en mobile, cerrar el sidebar
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        sidebar.classList.remove("active");
+        toggleBtn.innerHTML = '<i class="bx bx-menu"></i>';
+      }
     });
   });
   showSection("home");
 }
-
 document.addEventListener("DOMContentLoaded", () => {
   initLogin();
   initCorreoRestore();
