@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { pool } from "../models/db";
+import  pool  from "../models/db";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { encryptLuciferBlocks, decryptLuciferBlocks } from "../utils/lucifer";

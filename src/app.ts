@@ -14,7 +14,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+
+const allowedOrigin = process.env.FRONTEND_ORIGIN || "https://imhorsa.vercel.app";
+app.use(cors({ origin: allowedOrigin, credentials: true }));
 
 app.use(cors());
 app.use(express.json());
@@ -54,7 +57,5 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   }
   next(err);
 });
-
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+app.get("/health", (_req, res) => res.send("OK"));
+app.listen(PORT, () => console.log(`Listening on ${PORT}`));

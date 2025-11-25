@@ -9,7 +9,11 @@
     "build:client": "tsc -p tsconfig.client.json",
     "build:all": "npm run build && npm run build:client",
     "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "prestart": "npm run build",
     "start": "node dist/app.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "@types/express-session": "^1.18.2",

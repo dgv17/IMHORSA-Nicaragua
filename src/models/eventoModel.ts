@@ -1,4 +1,4 @@
-import { pool } from "./db";
+import pool from "../models/db";
 import type { ResultSetHeader } from "mysql2";
 
 export async function crearCotizacionEvento(data: any) {
