@@ -47,5 +47,9 @@ router.get("/roles", auth_1.requireAuth, adminController_1.getRoles);
 router.post("/usuarios", auth_1.requireAdmin, adminController_1.createUsuario);
 router.put("/usuarios/:id", auth_1.requireAdmin, adminController_1.updateUsuario);
 router.put("/force-password", auth_1.requireAdmin, adminController_1.forcePasswordChange);
+router.get("/clientes/naturales", auth_1.requireAuth, adminController_1.getClientesNaturales);
+router.get("/clientes/juridicos", auth_1.requireAuth, adminController_1.getClientesJuridicos);
+router.put("/clientes/naturales/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateClienteNatural);
+router.put("/clientes/juridicos/:id", auth_1.requireAdminOrGerenteGeneral, adminController_1.updateClienteJuridico);
 exports.default = router;
 //# sourceMappingURL=admin.js.map

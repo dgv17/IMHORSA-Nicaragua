@@ -1,10 +1,22 @@
 import { Router } from "express";
 import path from "path";
-import { 
-  login, logout, restoreRequest, restoreForm, restorePassword,
-  getUsuarios, getRoles, createUsuario, updateUsuario, forcePasswordChange
+import {
+  login,
+  logout,
+  restoreRequest,
+  restoreForm,
+  restorePassword,
+  getUsuarios,
+  getRoles,
+  createUsuario,
+  updateUsuario,
+  forcePasswordChange,
+  getClientesNaturales,
+  getClientesJuridicos,
+  updateClienteNatural, 
+  updateClienteJuridico 
 } from "../controllers/adminController";
-import { requireAuth, requireAdmin } from "../middleware/auth";
+import { requireAuth, requireAdmin, requireAdminOrGerenteGeneral } from "../middleware/auth";
 
 const router = Router();
 
@@ -29,7 +41,9 @@ router.get("/logout", logout);
 
 // Restore
 router.get("/restore-request", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "public", "admin", "correorestore.html"));
+  res.sendFile(
+    path.join(process.cwd(), "public", "admin", "correorestore.html")
+  );
 });
 router.post("/restore-request", restoreRequest);
 router.get("/restore/:token", restoreForm);
@@ -51,5 +65,9 @@ router.get("/roles", requireAuth, getRoles);
 router.post("/usuarios", requireAdmin, createUsuario);
 router.put("/usuarios/:id", requireAdmin, updateUsuario);
 router.put("/force-password", requireAdmin, forcePasswordChange);
+router.get("/clientes/naturales", requireAuth, getClientesNaturales);
+router.get("/clientes/juridicos", requireAuth, getClientesJuridicos);
+router.put("/clientes/naturales/:id", requireAdminOrGerenteGeneral, updateClienteNatural);
+router.put("/clientes/juridicos/:id", requireAdminOrGerenteGeneral, updateClienteJuridico);
 
 export default router;

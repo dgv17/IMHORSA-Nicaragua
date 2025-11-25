@@ -13,6 +13,10 @@ exports.getRoles = getRoles;
 exports.createUsuario = createUsuario;
 exports.updateUsuario = updateUsuario;
 exports.forcePasswordChange = forcePasswordChange;
+exports.getClientesNaturales = getClientesNaturales;
+exports.getClientesJuridicos = getClientesJuridicos;
+exports.updateClienteNatural = updateClienteNatural;
+exports.updateClienteJuridico = updateClienteJuridico;
 const db_1 = require("../models/db");
 const crypto_1 = __importDefault(require("crypto"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
@@ -234,6 +238,147 @@ async function forcePasswordChange(req, res) {
     }
     catch (error) {
         console.error("Error al forzar cambio de contraseña:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+async function getClientesNaturales(req, res) {
+    try {
+        const [rows] = await db_1.pool.query(`
+      SELECT cn.id,
+             CONCAT_WS(' ', cn.primer_nombre, cn.segundo_nombre, cn.primer_apellido, cn.segundo_apellido) AS nombre_completo,
+             cn.cedula,
+             cn.telefono,
+             cn.correo,
+             d.nombre AS departamento,
+             m.nombre AS municipio,
+             dir.direccion
+      FROM cliente_natural cn
+      LEFT JOIN direcciones dir ON cn.direccion_id = dir.id
+      LEFT JOIN municipios m ON dir.municipio_id = m.id
+      LEFT JOIN departamentos d ON m.departamento_id = d.id
+      ORDER BY cn.id ASC
+    `);
+        res.json(rows);
+    }
+    catch (error) {
+        console.error("Error al obtener clientes naturales:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+async function getClientesJuridicos(req, res) {
+    try {
+        const [rows] = await db_1.pool.query(`
+      SELECT cj.id,
+             cj.nombre AS nombre_empresa,
+             cj.correo,
+             d.nombre AS departamento,
+             m.nombre AS municipio,
+             dir.direccion
+      FROM cliente_juridico cj
+      LEFT JOIN direcciones dir ON cj.direccion_id = dir.id
+      LEFT JOIN municipios m ON dir.municipio_id = m.id
+      LEFT JOIN departamentos d ON m.departamento_id = d.id
+      ORDER BY cj.id ASC
+    `);
+        res.json(rows);
+    }
+    catch (error) {
+        console.error("Error al obtener clientes jurídicos:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+// Actualizar Cliente Natural
+async function updateClienteNatural(req, res) {
+    const { id } = req.params;
+    const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, cedula, telefono, correo, departamento, municipio, direccion, } = req.body;
+    const errores = [];
+    if (!primer_nombre)
+        errores.push("Debe ingresar el primer nombre");
+    if (!primer_apellido)
+        errores.push("Debe ingresar el primer apellido");
+    if (!cedula)
+        errores.push("Debe ingresar la cédula");
+    if (!correo)
+        errores.push("Debe ingresar el correo");
+    if (!departamento)
+        errores.push("Debe seleccionar un departamento");
+    if (!municipio)
+        errores.push("Debe seleccionar un municipio");
+    if (!direccion)
+        errores.push("Debe ingresar la dirección");
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+    try {
+        // Buscar o crear dirección
+        const [rows] = await db_1.pool.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
+        let direccionId;
+        if (rows.length > 0) {
+            direccionId = rows[0].id;
+        }
+        else {
+            const [result] = await db_1.pool.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
+            direccionId = result.insertId;
+        }
+        // Actualizar cliente natural
+        await db_1.pool.query(`UPDATE cliente_natural 
+       SET primer_nombre = ?, segundo_nombre = ?, primer_apellido = ?, segundo_apellido = ?, 
+           cedula = ?, telefono = ?, correo = ?, direccion_id = ? 
+       WHERE id = ?`, [
+            primer_nombre.trim(),
+            segundo_nombre?.trim() || null,
+            primer_apellido.trim(),
+            segundo_apellido?.trim() || null,
+            cedula.trim(),
+            telefono?.trim() || null,
+            correo.trim(),
+            direccionId,
+            id,
+        ]);
+        res.json({ success: true });
+    }
+    catch (error) {
+        console.error("Error al actualizar cliente natural:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+}
+// Actualizar Cliente Jurídico
+async function updateClienteJuridico(req, res) {
+    const { id } = req.params;
+    const { nombre_empresa, correo, departamento, municipio, direccion } = req.body;
+    const errores = [];
+    if (!nombre_empresa)
+        errores.push("Debe ingresar el nombre de la empresa");
+    if (!correo)
+        errores.push("Debe ingresar el correo");
+    if (!departamento)
+        errores.push("Debe seleccionar un departamento");
+    if (!municipio)
+        errores.push("Debe seleccionar un municipio");
+    if (!direccion)
+        errores.push("Debe ingresar la dirección");
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+    try {
+        // Buscar o crear dirección
+        const [rows] = await db_1.pool.query(`SELECT id FROM direcciones WHERE direccion = ? AND municipio_id = ?`, [direccion.trim(), municipio]);
+        let direccionId;
+        if (rows.length > 0) {
+            direccionId = rows[0].id;
+        }
+        else {
+            const [result] = await db_1.pool.query(`INSERT INTO direcciones (direccion, municipio_id) VALUES (?, ?)`, [direccion.trim(), municipio]);
+            direccionId = result.insertId;
+        }
+        // Actualizar cliente jurídico
+        await db_1.pool.query(`UPDATE cliente_juridico 
+       SET nombre = ?, correo = ?, direccion_id = ? 
+       WHERE id = ?`, [nombre_empresa.trim(), correo.trim(), direccionId, id]);
+        res.json({ success: true });
+    }
+    catch (error) {
+        console.error("Error al actualizar cliente jurídico:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 }

@@ -12,3 +12,13 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
   }
   return res.status(403).send("Acceso denegado: solo administradores");
 }
+export function requireAdminOrGerenteGeneral(req: Request, res: Response, next: NextFunction) {
+  const user = req.session.user;
+  if (!user) {
+    return res.status(401).json({ error: "No autenticado" });
+  }
+  if (user.rol === 1 || user.rol === 2) {
+    return next();
+  }
+  return res.status(403).json({ error: "No autorizado" });
+}

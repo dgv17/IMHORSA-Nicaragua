@@ -986,7 +986,8 @@ function initAgregarUsuario() {
         const password = form.querySelector("input[name='password_user']").value;
         const nombre = form.querySelector("input[name='nombre']").value;
         const correo = form.querySelector("input[name='correo']").value;
-        const rol = form.querySelector("select[name='rol']").value;
+        const rol = form.querySelector("select[name='rol']")
+            .value;
         const errores = [];
         const errUser = validarUsernameFront(username);
         if (errUser)
@@ -1016,7 +1017,13 @@ function initAgregarUsuario() {
                     "CSRF-Token": token,
                 },
                 credentials: "same-origin",
-                body: JSON.stringify({ username, password_user: password, nombre, correo, rol_id: rol })
+                body: JSON.stringify({
+                    username,
+                    password_user: password,
+                    nombre,
+                    correo,
+                    rol_id: rol,
+                }),
             });
             const data = yield res.json();
             if (!res.ok) {
@@ -1029,10 +1036,13 @@ function initAgregarUsuario() {
                 return;
             }
             mostrarNotif("Usuario creado correctamente", "success");
-            form.querySelector("input[name='username']").value = "";
+            form.querySelector("input[name='username']").value =
+                "";
             form.querySelector("input[name='password_user']").value = "";
-            form.querySelector("input[name='nombre']").value = "";
-            form.querySelector("input[name='correo']").value = "";
+            form.querySelector("input[name='nombre']").value =
+                "";
+            form.querySelector("input[name='correo']").value =
+                "";
             form.querySelector("select[name='rol']").selectedIndex = 0;
             const details = document.getElementById("agregar-usuario");
             if (details)
@@ -1052,7 +1062,8 @@ function initModificarUsuario() {
     const btnActualizar = form.querySelector("button");
     btnActualizar.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
         e.preventDefault();
-        const id = form.querySelector("input[name='mod_id']").value;
+        const id = form.querySelector("input[name='mod_id']")
+            .value;
         const username = form.querySelector("input[name='mod_username']").value;
         const nombre = form.querySelector("input[name='mod_nombre']").value;
         const correo = form.querySelector("input[name='mod_correo']").value;
@@ -1083,7 +1094,7 @@ function initModificarUsuario() {
                     "CSRF-Token": token,
                 },
                 credentials: "same-origin",
-                body: JSON.stringify({ username, nombre, correo, rol_id: rol })
+                body: JSON.stringify({ username, nombre, correo, rol_id: rol }),
             });
             const data = yield res.json();
             if (!res.ok) {
@@ -1189,6 +1200,277 @@ function initPasswordManagement() {
         }));
     }
 }
+function cargarClientes() {
+    // Clientes Naturales
+    fetch("/admin/clientes/naturales")
+        .then((res) => res.json())
+        .then((clientes) => {
+        const tbody = document.getElementById("tabla-clientes-naturales");
+        tbody.innerHTML = "";
+        clientes.forEach((c) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+          <td>${c.nombre_completo}</td>
+          <td>${c.cedula || "-"}</td>
+          <td>${c.telefono || "-"}</td>
+          <td>${c.correo || "-"}</td>
+          <td>${c.departamento || "-"}</td>
+          <td>${c.municipio || "-"}</td>
+          <td>${c.direccion || "-"}</td>
+          <td><button class="cotizar-btn" data-id="${c.id}" data-tipo="natural">Editar</button></td>
+        `;
+            tbody.appendChild(tr);
+        });
+    })
+        .catch((err) => {
+        console.error("Error al cargar clientes naturales:", err);
+        mostrarNotif("Error al cargar clientes naturales", "error");
+    });
+    // Clientes Jurídicos
+    fetch("/admin/clientes/juridicos")
+        .then((res) => res.json())
+        .then((clientes) => {
+        const tbody = document.getElementById("tabla-clientes-juridicos");
+        tbody.innerHTML = "";
+        clientes.forEach((c) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+          <td>${c.nombre_empresa}</td>
+          <td>${c.correo || "-"}</td>
+          <td>${c.departamento || "-"}</td>
+          <td>${c.municipio || "-"}</td>
+          <td>${c.direccion || "-"}</td>
+          <td><button class="cotizar-btn" data-id="${c.id}" data-tipo="juridico">Editar</button></td>
+        `;
+            tbody.appendChild(tr);
+        });
+    })
+        .catch((err) => {
+        console.error("Error al cargar clientes jurídicos:", err);
+        mostrarNotif("Error al cargar clientes jurídicos", "error");
+    });
+}
+function cargarDepartamentosClientes(depSelectName, munSelectName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const depSelect = document.querySelector(`select[name='${depSelectName}']`);
+        const munSelect = document.querySelector(`select[name='${munSelectName}']`);
+        if (!depSelect || !munSelect)
+            return;
+        // Cargar departamentos
+        const res = yield fetch("/api/catalogo/departamentos");
+        const departamentos = yield res.json();
+        depSelect.innerHTML = "<option disabled selected>Seleccione...</option>";
+        departamentos.forEach((d) => {
+            const opt = document.createElement("option");
+            opt.value = String(d.id);
+            opt.textContent = d.nombre;
+            depSelect.appendChild(opt);
+        });
+        // Al cambiar departamento, cargar municipios
+        depSelect.addEventListener("change", () => __awaiter(this, void 0, void 0, function* () {
+            const depId = depSelect.value;
+            const resMun = yield fetch(`/api/catalogo/municipios/${depId}`);
+            const municipios = yield resMun.json();
+            munSelect.innerHTML = "<option disabled selected>Seleccione...</option>";
+            municipios.forEach((m) => {
+                const opt = document.createElement("option");
+                opt.value = String(m.id);
+                opt.textContent = m.nombre;
+                munSelect.appendChild(opt);
+            });
+        }));
+    });
+}
+function initModificarClienteNatural() {
+    const form = document.querySelector("#modificar-cliente-natural .form-wrapper");
+    if (!form)
+        return;
+    const btnActualizar = form.querySelector("button");
+    btnActualizar.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const id = form.querySelector("input[name='mod_nat_id']").value;
+        const primer_nombre = form.querySelector("input[name='mod_nat_primer_nombre']").value;
+        const segundo_nombre = form.querySelector("input[name='mod_nat_segundo_nombre']").value;
+        const primer_apellido = form.querySelector("input[name='mod_nat_primer_apellido']").value;
+        const segundo_apellido = form.querySelector("input[name='mod_nat_segundo_apellido']").value;
+        const cedula = form.querySelector("input[name='mod_nat_cedula']").value;
+        const telefono = form.querySelector("input[name='mod_nat_telefono']").value;
+        const correo = form.querySelector("input[name='mod_nat_correo']").value;
+        const departamento = form.querySelector("select[name='mod_nat_departamento']").value;
+        const municipio = form.querySelector("select[name='mod_nat_municipio']").value;
+        const direccion = form.querySelector("input[name='mod_nat_direccion']").value;
+        const errores = [];
+        if (!primer_nombre)
+            errores.push("Debe ingresar el primer nombre");
+        if (!primer_apellido)
+            errores.push("Debe ingresar el primer apellido");
+        if (!cedula)
+            errores.push("Debe ingresar la cédula");
+        const errCorreo = validarCorreo(correo);
+        if (errCorreo)
+            errores.push(errCorreo);
+        if (!departamento)
+            errores.push("Debe seleccionar un departamento");
+        if (!municipio)
+            errores.push("Debe seleccionar un municipio");
+        if (!direccion)
+            errores.push("Debe ingresar la dirección");
+        if (errores.length > 0) {
+            errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+            return;
+        }
+        mostrarNotif("Actualizando cliente natural...", "loading");
+        try {
+            const token = yield getCsrfToken();
+            const res = yield fetch(`/admin/clientes/naturales/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token,
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    primer_nombre,
+                    segundo_nombre,
+                    primer_apellido,
+                    segundo_apellido,
+                    cedula,
+                    telefono,
+                    correo,
+                    departamento,
+                    municipio,
+                    direccion,
+                }),
+            });
+            const data = yield res.json();
+            if (!res.ok) {
+                if (data.errores && Array.isArray(data.errores)) {
+                    data.errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+                }
+                else {
+                    mostrarNotif(data.error || "Error al actualizar cliente", "error");
+                }
+                return;
+            }
+            mostrarNotif("Cliente natural actualizado correctamente", "success");
+            cargarClientes(); // refrescar tablas
+        }
+        catch (err) {
+            console.error("Error al actualizar cliente natural:", err);
+            mostrarNotif("Error de conexión", "error");
+        }
+    }));
+}
+function initModificarClienteJuridico() {
+    const form = document.querySelector("#modificar-cliente-juridico .form-wrapper");
+    if (!form)
+        return;
+    const btnActualizar = form.querySelector("button");
+    btnActualizar.addEventListener("click", (e) => __awaiter(this, void 0, void 0, function* () {
+        e.preventDefault();
+        const id = form.querySelector("input[name='mod_jur_id']").value;
+        const nombre_empresa = form.querySelector("input[name='mod_jur_nombre']").value;
+        const correo = form.querySelector("input[name='mod_jur_correo']").value;
+        const departamento = form.querySelector("select[name='mod_jur_departamento']").value;
+        const municipio = form.querySelector("select[name='mod_jur_municipio']").value;
+        const direccion = form.querySelector("input[name='mod_jur_direccion']").value;
+        const errores = [];
+        if (!nombre_empresa)
+            errores.push("Debe ingresar el nombre de la empresa");
+        const errCorreo = validarCorreo(correo);
+        if (errCorreo)
+            errores.push(errCorreo);
+        if (!departamento)
+            errores.push("Debe seleccionar un departamento");
+        if (!municipio)
+            errores.push("Debe seleccionar un municipio");
+        if (!direccion)
+            errores.push("Debe ingresar la dirección");
+        if (errores.length > 0) {
+            errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+            return;
+        }
+        mostrarNotif("Actualizando cliente jurídico...", "loading");
+        try {
+            const token = yield getCsrfToken();
+            const res = yield fetch(`/admin/clientes/juridicos/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "CSRF-Token": token,
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    nombre_empresa,
+                    correo,
+                    departamento,
+                    municipio,
+                    direccion,
+                }),
+            });
+            const data = yield res.json();
+            if (!res.ok) {
+                if (data.errores && Array.isArray(data.errores)) {
+                    data.errores.forEach((err, i) => setTimeout(() => mostrarNotif(err, "error"), i * 500));
+                }
+                else {
+                    mostrarNotif(data.error || "Error al actualizar cliente", "error");
+                }
+                return;
+            }
+            mostrarNotif("Cliente jurídico actualizado correctamente", "success");
+            cargarClientes(); // refrescar tablas
+        }
+        catch (err) {
+            console.error("Error al actualizar cliente jurídico:", err);
+            mostrarNotif("Error de conexión", "error");
+        }
+    }));
+}
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn)
+        return;
+    if (btn.dataset.tipo === "natural") {
+        const fila = btn.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+        document.querySelector("input[name='mod_nat_id']").value = btn.dataset.id;
+        document.querySelector("input[name='mod_nat_primer_nombre']").value = extraerParte(celdas[0].textContent, 0);
+        document.querySelector("input[name='mod_nat_segundo_nombre']").value = extraerParte(celdas[0].textContent, 1);
+        document.querySelector("input[name='mod_nat_primer_apellido']").value = extraerParte(celdas[0].textContent, 2);
+        document.querySelector("input[name='mod_nat_segundo_apellido']").value = extraerParte(celdas[0].textContent, 3);
+        document.querySelector("input[name='mod_nat_cedula']").value = celdas[1].textContent || "";
+        document.querySelector("input[name='mod_nat_telefono']").value = celdas[2].textContent || "";
+        document.querySelector("input[name='mod_nat_correo']").value = celdas[3].textContent || "";
+        document.querySelector("select[name='mod_nat_departamento']").value = celdas[4].textContent || "";
+        document.querySelector("select[name='mod_nat_municipio']").value = celdas[5].textContent || "";
+        document.querySelector("input[name='mod_nat_direccion']").value = celdas[6].textContent || "";
+        const detailsNat = document.getElementById("modificar-cliente-natural");
+        if (detailsNat) {
+            detailsNat.open = true;
+            detailsNat.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+    if (btn.dataset.tipo === "juridico") {
+        const fila = btn.closest("tr");
+        const celdas = fila.querySelectorAll("td");
+        document.querySelector("input[name='mod_jur_id']").value = btn.dataset.id;
+        document.querySelector("input[name='mod_jur_nombre']").value = celdas[0].textContent || "";
+        document.querySelector("input[name='mod_jur_correo']").value = celdas[1].textContent || "";
+        document.querySelector("select[name='mod_jur_departamento']").value = celdas[2].textContent || "";
+        document.querySelector("select[name='mod_jur_municipio']").value = celdas[3].textContent || "";
+        document.querySelector("input[name='mod_jur_direccion']").value = celdas[4].textContent || "";
+        const details = document.getElementById("modificar-cliente-juridico");
+        if (details) {
+            details.open = true;
+            details.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+});
+function extraerParte(nombre, index) {
+    const partes = nombre.trim().split(" ");
+    return partes[index] || "";
+}
 // Vistas de panel admin
 function showSection(key) {
     document.querySelectorAll(".content-section").forEach((section) => {
@@ -1204,6 +1486,13 @@ function showSection(key) {
         cargarRoles();
         initModificarUsuario();
         initPasswordManagement();
+    }
+    if (key === "clientes") {
+        cargarClientes();
+        cargarDepartamentosClientes("mod_nat_departamento", "mod_nat_municipio");
+        cargarDepartamentosClientes("mod_jur_departamento", "mod_jur_municipio");
+        initModificarClienteNatural();
+        initModificarClienteJuridico();
     }
 }
 function initPanelNavigation() {
